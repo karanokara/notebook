@@ -1,10 +1,8 @@
-
-
 var express = require( 'express' );
 var path = require( 'path' );
 var mustache = require( 'mustache' );
 var fs = require( 'fs' ); // this engine requires the fs module
-var indexRouter = require( './routes/index' );
+var loginRouter = require( './routes/login' );
 var usersRouter = require( './routes/users' );
 var server = express();
 
@@ -38,8 +36,32 @@ server.use( express.urlencoded( { extended: false } ) );
  */
 server.use( '/files', express.static( path.join( __dirname, 'public' ) ) );
 
+/**
+ * Serving requests
+ */
+server.use( '/login', loginRouter );
+server.use( '/user', usersRouter );
+server.use( '/error', function ( req, res ) {
+    res.send( '404 Not found!' );
+} );
 
-server.use( '/', indexRouter );
-server.use( '/users', usersRouter );
+/**
+ * Final route
+ * A route match any path
+ * will be used as the final choice
+ * 
+ */
+server.use( function ( req, res ) {
+
+    // If it is a new session
+    // redirect to /login
+    res.redirect( '/login' );
+
+
+    // redirect to /users 
+    //res.redirect( '/user' );
+
+
+} );
 
 module.exports = server;

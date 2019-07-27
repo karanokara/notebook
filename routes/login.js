@@ -1,7 +1,7 @@
 var express = require( 'express' );
 var router = express.Router();
 
-var indexView = {
+var view = {
   signInTitle: 'A Simple Nodebook',
 
   stylesheets: [
@@ -19,7 +19,7 @@ var indexView = {
 /* GET home page. */
 router.get( '/', function ( req, res, next ) {
   // render index.html using view obj
-  res.render( 'index', indexView );
+  res.render( 'login', view );
 } );
 
 module.exports = router;
