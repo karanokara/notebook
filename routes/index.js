@@ -4,9 +4,15 @@ var router = express.Router();
 var indexView = {
   signInTitle: 'A Simple Nodebook',
 
+  stylesheets: [
+    'files/stylesheets/bootstrap.min.css',
+    'files/stylesheets/sign-in.css',
+  ],
+  headScripts: [
 
+  ],
 
-  copyright: 'Huanhua Su little project'
+  copyright: '2019, A little project'
 };
 
 
