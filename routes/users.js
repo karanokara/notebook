@@ -1,5 +1,6 @@
 var express = require( 'express' );
 var router = express.Router();
+var tools = require( '../tools' );
 
 var view = {
   siteTitle: 'Notebook - User Notes',
@@ -36,6 +37,7 @@ var view = {
   },
   userSettingBtnImage: '/files/images/user-setting.svg',
   noteSettingBtnImage: '/files/images/note-setting.svg',
+  noteExpand: tools.readFile( 'public/images/arrow-down-s.svg' ),
   logoImage: '/files/images/note-no-shadow.svg',
 };
 

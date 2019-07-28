@@ -20,3 +20,7 @@ body {
 .app-header {
     background: linear-gradient(30deg, #e5ecf1,#f1f7f5);
 }
+
+.note-expand:hover {
+    cursor: pointer;
+}
