@@ -9,7 +9,7 @@
 
         <link rel="icon" href="files/images/favicon.png">
 
-        <title>Sign In</title>
+        <title>{{siteTitle}}</title>
 
         {{#stylesheets}}
         <link href="{{.}}" rel="stylesheet">
@@ -21,9 +21,9 @@
 
     </head>
 
-    <body class="text-center">
-        <form class="form-signin">
-            <img class="mb-4" src="/files/images/note-no-shadow.svg" alt="" width="120" height="120">
+    <body class="text-center bg-light login">
+        <form class=" form-signin">
+            <img class="mb-4" src="{{logoImage}}" alt="" width="120" height="120">
             <h1 class="h3 mb-3 font-weight-normal">{{signInTitle}}</h1>
             <label for="inputEmail" class="sr-only">Username</label>
             <input type="email" id="inputEmail" class="form-control" placeholder="Username" required autofocus>

@@ -8,7 +8,7 @@
 var server = require( '../server' );
 //var debug = require('debug')('notebook:server');
 var port = normalizePort( process.env.PORT || '3000' );
-var hostname = '127.0.0.1';
+var hostname = '0.0.0.0';
 
 /**
  * Normalize a port into a number, string, or false.

@@ -2,14 +2,40 @@ var express = require( 'express' );
 var router = express.Router();
 
 var view = {
-  name: '',
+  siteTitle: 'Notebook - User Notes',
+  username: '',
   list: [
+    {
+      noteTitle: 'Suggestions',
+      noteExcert: 'Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ....'
+
+    },
+    {
+      noteTitle: 'Suggestions',
+      noteExcert: 'Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ....'
+
+    },
+    {
+      noteTitle: 'Suggestions',
+      noteExcert: 'Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ....'
+
+    },
+    {
+      noteTitle: 'Suggestions',
+      noteExcert: 'Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ....'
+
+    },
+  ],
+  stylesheets: [
+    'files/stylesheets/bootstrap.min.css',
+    'files/stylesheets/style.css',
 
   ],
   settings: {
 
   },
-
+  noteSettingBtnImage: '/files/images/note-setting-btn.svg',
+  logoImage: '/files/images/note-no-shadow.svg',
 };
 
 /* GET users listing. */

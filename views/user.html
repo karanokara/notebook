@@ -1,1 +1,66 @@
-fsdjfidsjf
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link rel="icon" href="files/images/favicon.png">
+
+        <title>{{siteTitle}}</title>
+
+        {{#stylesheets}}
+        <link href="{{.}}" rel="stylesheet">
+        {{/stylesheets}}
+
+        {{#headScripts}}
+        <script type="text/javascript" src="{{.}}"></script>
+        {{/headScripts}}
+
+    </head>
+
+    <body class="bg-light p-0">
+
+
+        <div id="site-wrapper" class="site-wrapper mx-auto mb-5 pb-5">
+
+
+            <main role="main" class="container">
+                <div class="site-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
+                    <img class="mr-3" src="{{logoImage}}" alt="" width="48" height="48">
+                    <div class="lh-100">
+                        <h6 class="mb-0 lh-100">Bootstrap</h6>
+                        <small>Since 2011</small>
+                    </div>
+                </div>
+
+                {{#list}}
+                <div class="my-3 p-3 bg-white rounded shadow-sm">
+                    <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
+                        <div class="note-title">
+                            {{noteTitle}}
+                        </div>
+
+                        <button type="button" class="btn btn-sm note-setting-btn bg-transparent">
+                            <img class="" src="{{noteSettingBtnImage}}" alt="" width="24" height="24">
+                        </button>
+
+                    </h6>
+                    <div class="media text-muted pt-3">
+                        <p class="media-body pb-3 mb-0 small lh-125">
+                            {{noteExcert}}
+                        </p>
+                    </div>
+                    <small class="d-block text-center mt-3">
+                        <a href="#">See More</a>
+                    </small>
+                </div>
+                {{/list}}
+
+            </main>
+        </div>
+    </body>
+
+</html>
