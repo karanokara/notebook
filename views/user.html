@@ -24,15 +24,19 @@
     <body class="bg-light p-0">
 
 
-        <div id="site-wrapper" class="site-wrapper mx-auto mb-5 pb-5">
+        <div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5">
 
 
             <main role="main" class="container">
-                <div class="site-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
+                <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
                     <img class="mr-3" src="{{logoImage}}" alt="" width="48" height="48">
-                    <div class="lh-100">
-                        <h6 class="mb-0 lh-100">Bootstrap</h6>
-                        <small>Since 2011</small>
+                    <div class="">
+                        <h6 class="mb-0">Nodebook</h6>
+                        <small class="text-secondary">@{{username}}</small>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img
+                                class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
                     </div>
                 </div>
 

@@ -3,7 +3,7 @@ var router = express.Router();
 
 var view = {
   siteTitle: 'Notebook - User Notes',
-  username: '',
+  username: 'HappyTester',
   list: [
     {
       noteTitle: 'Suggestions',
@@ -34,7 +34,8 @@ var view = {
   settings: {
 
   },
-  noteSettingBtnImage: '/files/images/note-setting-btn.svg',
+  userSettingBtnImage: '/files/images/user-setting.svg',
+  noteSettingBtnImage: '/files/images/note-setting.svg',
   logoImage: '/files/images/note-no-shadow.svg',
 };
 

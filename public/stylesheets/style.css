@@ -12,11 +12,11 @@ body {
 }
 
 
-.site-wrapper {
+.app-wrapper {
     max-width: 570px;
 }
 
 
-.site-header {
-    
+.app-header {
+    background: linear-gradient(30deg, #e5ecf1,#f1f7f5);
 }
