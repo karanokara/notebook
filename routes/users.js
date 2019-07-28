@@ -38,6 +38,7 @@ var view = {
   userSettingBtnImage: '/files/images/user-setting.svg',
   noteSettingBtnImage: '/files/images/note-setting.svg',
   noteExpand: tools.readFile( 'public/images/arrow-down-s.svg' ),
+  appBottomMenu: tools.readFile( 'views/app-bottom-menu.html' ),
   logoImage: '/files/images/note-no-shadow.svg',
 };
 
