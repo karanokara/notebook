@@ -1,72 +1,42 @@
-<!doctype html>
-<html lang="en">
+<div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5">
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
-
-        <link rel="icon" href="files/images/favicon.png">
-
-        <title>{{siteTitle}}</title>
-
-        {{#stylesheets}}
-        <link href="{{.}}" rel="stylesheet">
-        {{/stylesheets}}
-
-        {{#headScripts}}
-        <script type="text/javascript" src="{{.}}"></script>
-        {{/headScripts}}
-
-    </head>
-
-    <body class="bg-light p-0">
-
-
-        <div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5">
-
-
-            <main role="main" class="container">
-                <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
-                    <img class="mr-3" src="{{logoImage}}" alt="" width="48" height="48">
-                    <div class="">
-                        <h6 class="mb-0">Nodebook</h6>
-                        <small class="text-secondary">@{{username}}</small>
-                    </div>
-                    <div class="ml-auto">
-                        <button type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img
-                                class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
-                    </div>
-                </div>
-
-                {{#list}}
-                <div class="my-3 p-3 bg-white rounded shadow-sm">
-                    <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
-                        <div class="note-title">
-                            {{noteTitle}}
-                        </div>
-
-                        <button type="button" class="btn btn-sm note-setting-btn bg-transparent">
-                            <img class="" src="{{noteSettingBtnImage}}" alt="" width="24" height="24">
-                        </button>
-
-                    </h6>
-                    <div class="media text-muted pt-3">
-                        <p class="media-body pb-3 mb-0 small lh-125">
-                            {{noteExcert}}
-                        </p>
-                    </div>
-                    <small class="d-block text-center mt-2">
-                        <div class="note-expand">{{&noteExpand}}</div>
-                    </small>
-                </div>
-                {{/list}}
-
-            </main>
-
-            {{&appBottomMenu}}
+    <main role="main" class="container">
+        <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
+            <img class="mr-3" src="{{logoImage}}" alt="" width="48" height="48">
+            <div class="">
+                <h6 class="mb-0">Nodebook</h6>
+                <small class="text-secondary">@{{username}}</small>
+            </div>
+            <div class="ml-auto">
+                <button type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img class=""
+                        src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
+            </div>
         </div>
-    </body>
 
-</html>
+        {{#list}}
+        <div class="my-3 p-3 bg-white rounded shadow-sm">
+            <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
+                <div class="note-title">
+                    {{noteTitle}}
+                </div>
+
+                <button type="button" class="btn btn-sm note-setting-btn bg-transparent">
+                    <img class="" src="{{noteSettingBtnImage}}" alt="" width="24" height="24">
+                </button>
+
+            </h6>
+            <div class="media text-muted pt-3">
+                <p class="media-body pb-3 mb-0 small lh-125">
+                    {{noteExcert}}
+                </p>
+            </div>
+            <small class="d-block text-center mt-2">
+                <div class="note-expand">{{&noteExpand}}</div>
+            </small>
+        </div>
+        {{/list}}
+
+    </main>
+
+    {{&appBottomMenu}}
+</div>

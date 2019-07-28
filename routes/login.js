@@ -1,10 +1,11 @@
 var express = require( 'express' );
+var tool = require( '../tool' );
 var router = express.Router();
 
 var view = {
   siteTitle: 'Nodebook - Login',
   signInTitle: 'A Simple Nodebook',
-
+  page: 'login',
   stylesheets: [
     'files/stylesheets/bootstrap.min.css',
     'files/stylesheets/style.css',
@@ -20,8 +21,12 @@ var view = {
 
 /* GET home page. */
 router.get( '/', function ( req, res, next ) {
+
+  view.body = tool.render( 'login', view );
   // render index.html using view obj
-  res.render( 'login', view );
+
+  res.render( 'index', view );
+
 } );
 
 module.exports = router;

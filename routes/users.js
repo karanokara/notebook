@@ -1,9 +1,10 @@
 var express = require( 'express' );
 var router = express.Router();
-var tools = require( '../tools' );
+var tool = require( '../tool' );
 
 var view = {
   siteTitle: 'Notebook - User Notes',
+  page: 'user',
   username: 'HappyTester',
   list: [
     {
@@ -37,16 +38,18 @@ var view = {
   },
   userSettingBtnImage: '/files/images/user-setting.svg',
   noteSettingBtnImage: '/files/images/note-setting.svg',
-  noteExpand: tools.readFile( 'public/images/arrow-down-s.svg' ),
-  appBottomMenu: tools.readFile( 'views/app-bottom-menu.html' ),
+  noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
+  appBottomMenu: tool.readFile( 'views/app-bottom-menu.html' ),
   logoImage: '/files/images/note-no-shadow.svg',
 };
 
 /* GET users listing. */
 router.get( '/', function ( req, res, next ) {
 
-  // render user.html using view obj
-  res.render( 'user', view );
+  view.body = tool.render( 'user', view );
+
+  // render index.html using view obj
+  res.render( 'index', view );
 } );
 
 module.exports = router;

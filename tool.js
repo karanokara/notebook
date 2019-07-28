@@ -1,4 +1,5 @@
 var fs = require( 'fs' );
+var mustache = require( 'mustache' );
 
 var tools = {
     // root of path this this file folder ../notebook
@@ -7,7 +8,10 @@ var tools = {
 
         return buffer.toString();
     },
-
+    render: function ( viewTemplate, view ) {
+        var path = 'views/' + viewTemplate + '.html'
+        return mustache.render( this.readFile( path ), view );
+    }
 
 };
 
