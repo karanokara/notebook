@@ -21,8 +21,12 @@
 
     </head>
 
-    <body class="bg-light p-0 {{page}} ">
+    <body class="bg-light p-0 {{bodyClasses}} ">
         {{&body}}
+
+        {{#footerScripts}}
+        <script type="text/javascript" src="{{.}}"></script>
+        {{/footerScripts}}
     </body>
 
 </html>

@@ -3,9 +3,9 @@ var tool = require( '../tool' );
 var router = express.Router();
 
 var view = {
-  siteTitle: 'Nodebook - Login',
-  signInTitle: 'A Simple Nodebook',
-  page: 'login',
+  siteTitle: 'Notebook - Login',
+  signInTitle: 'A Simple Notebook',
+  bodyClasses: 'login',
   stylesheets: [
     'files/stylesheets/bootstrap.min.css',
     'files/stylesheets/style.css',

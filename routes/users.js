@@ -4,7 +4,7 @@ var tool = require( '../tool' );
 
 var view = {
   siteTitle: 'Notebook - User Notes',
-  page: 'user',
+  bodyClasses: 'user',
   username: 'HappyTester',
   list: [
     {
