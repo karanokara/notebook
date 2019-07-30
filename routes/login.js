@@ -23,8 +23,8 @@ var view = {
 router.get( '/', function ( req, res, next ) {
 
   view.body = tool.render( 'login', view );
-  // render index.html using view obj
 
+  // render index.html using view obj
   res.render( 'index', view );
 
 } );

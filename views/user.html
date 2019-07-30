@@ -8,7 +8,8 @@
                 <small class="text-secondary">@{{userData.name}}</small>
             </div>
             <div class="ml-auto">
-                <button id="note-setting-btn" type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
+                <button id="note-setting-btn" type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img
+                        class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
             </div>
         </div>
 
@@ -37,5 +38,8 @@
 
     </main>
 
-    {{&appBottomMenu}}
+    {{#appBottomMenus}}
+    {{&.}}
+    {{/appBottomMenus}}
+
 </div>
