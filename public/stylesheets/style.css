@@ -27,6 +27,14 @@ body {
     cursor: pointer;
 }
 
-.app-bottom-menu .shadow-sm {
+.app-bottom-menu.shadow-sm {
     box-shadow: 0 -.125rem .25rem rgba(0,0,0,.075)!important;
+}
+
+.app-bottom-menu .setting-item {
+    cursor: pointer;
+}
+
+.back-lid {
+    
 }

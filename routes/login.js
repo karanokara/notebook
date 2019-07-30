@@ -1,16 +1,12 @@
 var express = require( 'express' );
 var tool = require( '../tool' );
+var view = require( './view' );
 var router = express.Router();
 
-var view = {
+var loginView = {
   siteTitle: 'Notebook - Login',
   signInTitle: 'A Simple Notebook',
   bodyClasses: 'login',
-  stylesheets: [
-    'files/stylesheets/bootstrap.min.css',
-    'files/stylesheets/style.css',
-    'files/stylesheets/sign-in.css',
-  ],
   headScripts: [
 
   ],
@@ -19,8 +15,11 @@ var view = {
 };
 
 
+
+
 /* GET home page. */
 router.get( '/', function ( req, res, next ) {
+  view.extend( loginView );
 
   view.body = tool.render( 'login', view );
 

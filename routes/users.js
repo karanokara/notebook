@@ -1,51 +1,71 @@
 var express = require( 'express' );
-var router = express.Router();
 var tool = require( '../tool' );
+var view = require( './view' );
+var router = express.Router();
 
-var view = {
+var userView = {
   siteTitle: 'Notebook - User Notes',
   bodyClasses: 'user',
   username: 'HappyTester',
+  menus: [],
   userSettingBtnImage: '/files/images/user-setting.svg',
   noteSettingBtnImage: '/files/images/note-setting.svg',
   noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
-  appBottomMenus: tool.readFile( 'views/app-bottom-menu.html' ),
   logoImage: '/files/images/note-no-shadow.svg',
 };
 
 var appSettingView = {
+  title: "Notebook",
+  listingClasses: 'flex-column',
   items: [
     {
-      itemName: 'Unknow'
+      itemName: 'Change username',
+      itemIcon: tool.readFile( 'public/images/person.svg' ),
+      settingStr: 'username'
+
     },
     {
-      itemName: 'Username'
-    },
-    {
-      itemName: 'Password'
+      itemName: 'Change password',
+      itemIcon: tool.readFile( 'public/images/key.svg' ),
+      settingStr: 'password'
+
     }
   ]
 };
 
 var noteSettingView = {
+  title: "Note",
+  listingClasses: 'flex-column',
   items: [
     {
-      itemName: 'Edit'
+      itemName: 'Edit',
+      itemIcon: tool.readFile( 'public/images/edit.svg' ),
+      settingStr: 'edit'
     },
     {
-      itemName: 'Delete'
+      itemName: 'Delete',
+      itemIcon: tool.readFile( 'public/images/delete.svg' ),
+      settingStr: 'delete'
+
     },
     {
-      itemName: 'View Details'
+      itemName: 'View Details',
+      itemIcon: tool.readFile( 'public/images/detail.svg' ),
+      settingStr: 'detail'
+
     }
   ]
 };
 
 var noteAddView = {
   title: "New",
+  //listingClasses: 'justify-content-around',
+  listingClasses: 'flex-column',
   items: [
     {
-      itemName: 'note'
+      itemName: 'Note',
+      settingStr: 'note',
+      itemIcon: tool.readFile( 'public/images/file.svg' ),
     },
   ]
 };
@@ -54,12 +74,18 @@ var noteAddView = {
 router.get( '/', function ( req, res, next ) {
   var userFile = 'user';
 
+  view.extend( userView );
+  view.menus.length = 0;
+  view.menus.push( tool.render( 'app-bottom-menu', appSettingView ) );
+  view.menus.push( tool.render( 'app-bottom-menu', noteSettingView ) );
+  view.menus.push( tool.render( 'app-bottom-menu', noteAddView ) );
+
+  view.userData = tool.fetchNoteData( userFile );
 
   view.body = tool.render( 'user', view );
-  view.menuAppSetting = tool.render( 'app-bottom-menu', appSettingView );
-  view.menuNoteSetting =
-    view.menuNoteAdd =
-    view.userData = tool.fetchNoteData( userFile );
+
+  // console.log( view );
+
   // render index.html using view obj
   res.render( 'index', view );
 } );

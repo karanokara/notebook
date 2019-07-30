@@ -1,4 +1,4 @@
-<div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5">
+<div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5 position-relative">
 
     <main role="main" class="container">
         <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
@@ -38,8 +38,11 @@
 
     </main>
 
-    {{#appBottomMenus}}
-    {{&.}}
-    {{/appBottomMenus}}
+    <div class="back-lid invisible position-absolute">
+
+        {{#menus}}
+        {{&.}}
+        {{/menus}}
+    </div>
 
 </div>
