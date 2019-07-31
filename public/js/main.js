@@ -11,6 +11,7 @@ var menuManager = {
 
 var activityManager = {
     currentActivity: null,
+    isActivityEdited: false,
 };
 
 app.init = function () {
@@ -38,9 +39,36 @@ app.init = function () {
 
     } );
 
-    $( '.setting-item[data-type="new-note"]' ).on( 'click', function () {
+    /* ---------------- add note settings ----------------------- */
+
+    $( '.setting-item[data-type="note"]' ).on( 'click', function () {
+        activityManager.openActivity( '#note-edit' );
+    } );
+
+    /* ---------------- note settings ----------------------- */
+
+    $( '.setting-item[data-type="delete"]' ).on( 'click', function () {
 
     } );
+
+    $( '.go-back-btn' ).on( 'click', function () {
+        if ( activityManager.isActivityEdited ) {
+            var r = confirm( "Are you sure to discard?" );
+            if ( !r )
+                return;
+        }
+        activityManager.clearActivity();
+        activityManager.closeActivity();
+    } );
+
+    $( '.discard-btn' ).on( 'click', function () {
+        // clear draft 
+
+        // close activity
+        activityManager.clearActivity();
+        activityManager.closeActivity();
+    } );
+
 
     this.backLid.on( 'click', function () {
         menuManager.closeMenu();
@@ -82,11 +110,59 @@ menuManager.closeMenu = function () {
     }
 };
 
-activityManager.openActivity = function () {
+activityManager.initActivity = function ( activity ) {
+    var man = this;
 
+    man.currentActivity.title = activity.find( '#note-edit-title' );
+    man.currentActivity.content = activity.find( '#note-edit-content' );
+    man.currentActivity.submit = activity.find( '#note-edit-submit' );
+
+    man.currentActivity.title.on( 'keyup', function () {
+        man.isActivityEdited = true;
+    } );
+
+    man.currentActivity.content.on( 'keyup', function () {
+        man.isActivityEdited = true;
+    } );
+
+    man.currentActivity.submit.on( 'click', function () {
+        // process data to server
+    } );
+};
+
+activityManager.openActivity = function ( activityId ) {
+    var activity = $( activityId );
+
+    activity.css( {
+        'visibility': 'visible'
+    } );
+
+    this.currentActivity = {
+        dom: activity
+    };
+
+    this.initActivity( activity );
 };
 
 activityManager.closeActivity = function () {
+    if ( this.currentActivity ) {
+        this.currentActivity.dom.css( {
+            'visibility': ''
+        } );
+        this.currentActivity = null;
+    }
+};
+
+/**
+ * clear data that have been entered 
+ */
+activityManager.clearActivity = function () {
+    if ( this.isActivityEdited ) {
+        this.currentActivity.title.val( '' );
+        this.currentActivity.content.val( '' );
+        this.isActivityEdited = false;
+
+    }
 
 };
 

@@ -57,6 +57,8 @@ body {
     padding: .8rem;
 }
 
-.note-edit {
+.activity {
+    visibility: hidden;
     height: 100%;
 }
+
