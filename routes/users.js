@@ -74,6 +74,11 @@ var noteAddView = {
   ]
 };
 
+var noteEditView = {
+  backBtn: tool.readFile( 'public/images/left-arrow.svg' ),
+  deleteBtn: tool.readFile( 'public/images/delete.svg' ),
+}
+
 /* GET users listing. */
 router.get( '/', function ( req, res, next ) {
   var userFile = 'user';
@@ -83,6 +88,8 @@ router.get( '/', function ( req, res, next ) {
   view.menus.push( tool.render( 'app-bottom-menu', appSettingView ) );
   view.menus.push( tool.render( 'app-bottom-menu', noteSettingView ) );
   view.menus.push( tool.render( 'app-bottom-menu', noteAddView ) );
+
+  view.noteEdit = tool.render( 'note', noteEditView );
 
   view.userData = tool.fetchNoteData( userFile );
 

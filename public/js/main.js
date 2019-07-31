@@ -9,6 +9,10 @@ var menuManager = {
     openedMenu: null,
 };
 
+var activityManager = {
+    currentActivity: null,
+};
+
 app.init = function () {
     var _app = this;
     this.backLid = $( '#back-lid' );
@@ -22,12 +26,20 @@ app.init = function () {
     } );
 
     $( '#app-setting-btn' ).on( 'click', function () {
-
         menuManager.openMenu( '#app-setting' );
     } );
 
     $( '#note-add-btn' ).on( 'click', function () {
         menuManager.openMenu( '#note-add-setting' );
+    } );
+
+    // when click "done" on edit note activity
+    $( '#note-edit-submit' ).on( 'click', function () {
+
+    } );
+
+    $( '.setting-item[data-type="new-note"]' ).on( 'click', function () {
+
     } );
 
     this.backLid.on( 'click', function () {
@@ -36,19 +48,7 @@ app.init = function () {
 
 };
 
-app.toggleNoteOptions = function () {
-
-};
-
-app.toggleNoteAdd = function () {
-
-};
-
-app.toggleAppSettings = function () {
-
-};
-
-app.toggleNoteAdd = function () {
+app.addNote = function ( title, content ) {
 
 };
 
@@ -82,7 +82,13 @@ menuManager.closeMenu = function () {
     }
 };
 
+activityManager.openActivity = function () {
 
+};
+
+activityManager.closeActivity = function () {
+
+};
 
 $( document ).ready( function () {
     app.init();

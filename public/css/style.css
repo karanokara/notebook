@@ -56,3 +56,7 @@ body {
     border-radius: 50%;
     padding: .8rem;
 }
+
+.note-edit {
+    height: 100%;
+}
