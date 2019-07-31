@@ -5,28 +5,33 @@
     "lastLogin": 123456789,
     "list": [
         {
-            "noteTitle": "Apple",
+            "title": "Apple",
             "noteId": 1,
+            "type": "file",
             "note": "Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ...."
         },
         {
-            "noteTitle": "Banana",
+            "title": "Banana",
             "noteId": 2,
+            "type": "file",
             "note": "Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ...."
         },
         {
-            "noteTitle": "Cat",
+            "title": "Cat",
             "noteId": 3,
+            "type": "file",
             "note": "Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ...."
         },
         {
-            "noteTitle": "Dog",
+            "title": "Dog",
             "noteId": 4,
+            "type": "file",
             "note": "Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ...."
         },
         {
-            "noteTitle": "Egg",
+            "title": "Egg",
             "noteId": 5,
+            "type": "file",
             "note": "Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus ...."
         }
     ],
