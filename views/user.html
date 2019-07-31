@@ -1,4 +1,4 @@
-<div id="app-wrapper" class="app-wrapper mx-auto mb-5 pb-5 position-relative">
+<div id="app-wrapper" class="app-wrapper mx-auto mb-3 position-relative">
 
     <main role="main" class="container">
         <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
@@ -8,7 +8,7 @@
                 <small class="text-secondary">@{{userData.name}}</small>
             </div>
             <div class="ml-auto">
-                <button id="note-setting-btn" type="button" class="btn btn-sm note-setting-btn bg-transparent" alt="setting"><img
+                <button id="app-setting-btn" type="button" class="btn btn-sm app-setting-btn bg-transparent" alt="setting"><img
                         class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
             </div>
         </div>
@@ -20,7 +20,7 @@
                     {{noteTitle}}
                 </div>
 
-                <button type="button" class="btn btn-sm note-setting-btn bg-transparent">
+                <button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="{{noteId}}">
                     <img class="" src="{{noteSettingBtnImage}}" alt="" width="24" height="24">
                 </button>
 
@@ -38,7 +38,7 @@
 
     </main>
 
-    <div class="back-lid invisible position-absolute">
+    <div id="back-lid" class="back-lid fixed-top">
 
         {{#menus}}
         {{&.}}

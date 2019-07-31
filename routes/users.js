@@ -17,6 +17,7 @@ var userView = {
 var appSettingView = {
   title: "Notebook",
   listingClasses: 'flex-column',
+  settingId: 'app-setting',
   items: [
     {
       itemName: 'Change username',
@@ -36,6 +37,7 @@ var appSettingView = {
 var noteSettingView = {
   title: "Note",
   listingClasses: 'flex-column',
+  settingId: 'note-setting',
   items: [
     {
       itemName: 'Edit',
@@ -61,6 +63,7 @@ var noteAddView = {
   title: "New",
   //listingClasses: 'justify-content-around',
   listingClasses: 'flex-column',
+  settingId: 'note-add-setting',
   items: [
     {
       itemName: 'Note',

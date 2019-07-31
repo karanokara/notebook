@@ -2,11 +2,14 @@
 
 var view = {
     stylesheets: [
-        'files/stylesheets/bootstrap.min.css',
-        'files/stylesheets/style.css',
-        'files/stylesheets/sign-in.css',
+        'files/css/bootstrap.min.css',
+        'files/css/style.css',
+        'files/css/sign-in.css',
     ],
-
+    footerScripts: [
+        'files/js/jquery.min.js',
+        'files/js/main.js',
+    ]
 
 };
 
