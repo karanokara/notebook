@@ -89,7 +89,7 @@ router.get( '/', function ( req, res, next ) {
   view.menus.push( tool.render( 'app-bottom-menu', noteSettingView ) );
   view.menus.push( tool.render( 'app-bottom-menu', noteAddView ) );
 
-  view.noteEdit = tool.render( 'note', noteEditView );
+  view.noteEdit = tool.render( 'note-edit', noteEditView );
 
   view.userData = tool.fetchNoteData( userFile );
 

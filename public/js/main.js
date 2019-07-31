@@ -2,6 +2,7 @@
 
 var app = {
     backLid: null,
+    noteList: null,
 };
 
 var menuManager = {
@@ -18,6 +19,7 @@ var activityManager = {
 app.init = function () {
     var _app = this;
     this.backLid = $( '#back-lid' );
+    this.noteList = $( '#note-list' );
 
     $( '.note-setting-btn' ).on( 'click', function () {
         var id = this.getAttribute( 'note-id' ),
@@ -95,10 +97,20 @@ app.init = function () {
 
 app.addNote = function ( title, content ) {
 
+    this.noteList.append();
+    // update server side
+
 };
 
-app.deleteNote = function ( noteId ) {
+app.makeNote = function () {
 
+};
+
+app.deleteNote = function ( noteDom ) {
+
+    noteDom.remove();
+
+    // update server side
 };
 
 menuManager.openMenu = function ( menuId, title, item ) {
