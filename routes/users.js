@@ -11,6 +11,7 @@ var userView = {
   userSettingBtnImage: '/files/images/user-setting.svg',
   noteSettingBtnImage: '/files/images/note-setting.svg',
   noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
+  noteAddBtnImage: tool.readFile( 'public/images/add.svg' ),
   logoImage: '/files/images/note-no-shadow.svg',
 };
 

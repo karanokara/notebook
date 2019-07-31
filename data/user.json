@@ -1,4 +1,6 @@
 {
+    "username": "happy",
+    "password": 123,
     "name": "HappyTester",
     "lastLogin": 123456789,
     "list": [

@@ -21,12 +21,12 @@ app.init = function () {
         menuManager.openMenu( '#note-setting', title );
     } );
 
-    $( '.app-setting-btn' ).on( 'click', function () {
+    $( '#app-setting-btn' ).on( 'click', function () {
 
         menuManager.openMenu( '#app-setting' );
     } );
 
-    $( '.note-add-btn' ).on( 'click', function () {
+    $( '#note-add-btn' ).on( 'click', function () {
         menuManager.openMenu( '#note-add-setting' );
     } );
 
