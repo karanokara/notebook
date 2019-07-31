@@ -1,16 +1,17 @@
 
 
 var app = {
-    isMenuOpened: 0,
     backLid: null,
 };
 
 var menuManager = {
     openedMenu: null,
+    associateItem: null,
 };
 
 var activityManager = {
     currentActivity: null,
+
     isActivityEdited: false,
 };
 
@@ -23,8 +24,10 @@ app.init = function () {
             note = $( '#note' + id ),
             title = note.find( '.note-title' ).text();
 
-        menuManager.openMenu( '#note-setting', title );
+        menuManager.openMenu( '#note-setting', title, note );
     } );
+
+    /* ------------------- open menu btn --------------------- */
 
     $( '#app-setting-btn' ).on( 'click', function () {
         menuManager.openMenu( '#app-setting' );
@@ -39,17 +42,31 @@ app.init = function () {
 
     } );
 
-    /* ---------------- add note settings ----------------------- */
+    /* ---------------- add note menu ----------------------- */
 
-    $( '.setting-item[data-type="note"]' ).on( 'click', function () {
-        activityManager.openActivity( '#note-edit' );
+    $( '.setting-item[data-type="note-new"]' ).on( 'click', function () {
+        activityManager.openActivity( 'note-new', '#note-edit' );
     } );
 
-    /* ---------------- note settings ----------------------- */
+    /* ---------------- note settings menu ----------------------- */
+
+    $( '.setting-item[data-type="note-edit"]' ).on( 'click', function () {
+        var thisNote = menuManager.associateItem;
+
+        activityManager.openActivity( 'note-edit', '#note-edit', thisNote );
+    } );
+
+    $( '.setting-item[data-type="note-delete"]' ).on( 'click', function () {
+
+
+    } );
+
 
     $( '.setting-item[data-type="delete"]' ).on( 'click', function () {
 
     } );
+
+    /* ---------------- Edit note activity ------------------- */
 
     $( '.go-back-btn' ).on( 'click', function () {
         if ( activityManager.isActivityEdited ) {
@@ -63,9 +80,9 @@ app.init = function () {
 
     $( '.discard-btn' ).on( 'click', function () {
         // clear draft 
+        activityManager.clearActivity();
 
         // close activity
-        activityManager.clearActivity();
         activityManager.closeActivity();
     } );
 
@@ -80,7 +97,11 @@ app.addNote = function ( title, content ) {
 
 };
 
-menuManager.openMenu = function ( menuId, title ) {
+app.deleteNote = function ( noteId ) {
+
+};
+
+menuManager.openMenu = function ( menuId, title, item ) {
     var menu = $( menuId );
 
     if ( title )
@@ -94,6 +115,10 @@ menuManager.openMenu = function ( menuId, title ) {
         'visibility': 'visible'
     } );
     this.openedMenu = menu;
+
+    // associate opened menu with item selected
+    if ( item )
+        this.associateItem = item;
 };
 
 menuManager.closeMenu = function () {
@@ -110,38 +135,60 @@ menuManager.closeMenu = function () {
     }
 };
 
-activityManager.initActivity = function ( activity ) {
+activityManager.initActivity = function ( activity, activityDom, dom ) {
     var man = this;
 
-    man.currentActivity.title = activity.find( '#note-edit-title' );
-    man.currentActivity.content = activity.find( '#note-edit-content' );
-    man.currentActivity.submit = activity.find( '#note-edit-submit' );
+    man.currentActivity.title = activityDom.find( '#note-edit-title' );
+    man.currentActivity.content = activityDom.find( '#note-edit-content' );
+    man.currentActivity.submit = activityDom.find( '#note-edit-submit' );
 
+    if ( activity === 'note-edit' ) {
+        var title = dom.find( '.note-title' ).text(),
+            content = dom.find( '.note-content' ).text();
+        man.currentActivity.title.val( title );
+        man.currentActivity.content.val( content );
+    }
+
+    // a note must have title
     man.currentActivity.title.on( 'keyup', function () {
         man.isActivityEdited = true;
+        man.currentActivity.submit.removeAttr( 'disabled' );
+        man.currentActivity.title.off( 'keyup' );
     } );
 
+    // only content can't be submit on new note
     man.currentActivity.content.on( 'keyup', function () {
         man.isActivityEdited = true;
+        if ( activity == 'note-edit' )
+            man.currentActivity.submit.removeAttr( 'disabled' );
+
+        man.currentActivity.content.off( 'keyup' );
     } );
 
-    man.currentActivity.submit.on( 'click', function () {
+    man.currentActivity.submit.off( 'click' ).on( 'click', function () {
         // process data to server
+        if ( !this.hasAttribute( 'disabled' ) ) {
+
+        }
+
     } );
 };
 
-activityManager.openActivity = function ( activityId ) {
-    var activity = $( activityId );
+// dom is the related html dom that a new activity 
+// can fetch data from
+activityManager.openActivity = function ( activity, activityId, dom ) {
+    var activityDom = $( activityId );
 
-    activity.css( {
+    activityDom.css( {
         'visibility': 'visible'
     } );
 
     this.currentActivity = {
-        dom: activity
+        dom: activityDom,
+        activity: activity
     };
 
-    this.initActivity( activity );
+    this.initActivity( activity, activityDom, dom );
 };
 
 activityManager.closeActivity = function () {
@@ -157,11 +204,11 @@ activityManager.closeActivity = function () {
  * clear data that have been entered 
  */
 activityManager.clearActivity = function () {
-    if ( this.isActivityEdited ) {
+    if ( this.isActivityEdited || this.currentActivity.activity === 'note-edit' ) {
         this.currentActivity.title.val( '' );
         this.currentActivity.content.val( '' );
         this.isActivityEdited = false;
-
+        this.currentActivity.submit.attr( 'disabled', '' );
     }
 
 };

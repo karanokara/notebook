@@ -43,18 +43,18 @@ var noteSettingView = {
     {
       itemName: 'Edit',
       itemIcon: tool.readFile( 'public/images/edit.svg' ),
-      settingStr: 'edit'
+      settingStr: 'note-edit'
     },
     {
       itemName: 'Delete',
       itemIcon: tool.readFile( 'public/images/delete.svg' ),
-      settingStr: 'delete'
+      settingStr: 'note-delete'
 
     },
     {
       itemName: 'View Details',
       itemIcon: tool.readFile( 'public/images/detail.svg' ),
-      settingStr: 'detail'
+      settingStr: 'note-detail'
 
     }
   ]
@@ -68,8 +68,8 @@ var noteAddView = {
   items: [
     {
       itemName: 'Note',
-      settingStr: 'note',
       itemIcon: tool.readFile( 'public/images/file.svg' ),
+      settingStr: 'note-new',
     },
   ]
 };
