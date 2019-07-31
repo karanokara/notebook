@@ -38,6 +38,7 @@ body {
     visibility: hidden;
 }
 
+.note-add-btn,
 .app-bottom-menu .setting-item {
     cursor: pointer;
 }
