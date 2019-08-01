@@ -8,6 +8,7 @@ var view = {
     ],
     footerScripts: [
         'files/js/jquery.min.js',
+        'files/js/moment.min.js',
         'files/js/main.js',
     ]
 

@@ -3,6 +3,7 @@
 var app = {
     backLid: null,
     noteList: null,
+    currentFocusNote: null,
 };
 
 var menuManager = {
@@ -20,14 +21,9 @@ app.init = function () {
     var _app = this;
     this.backLid = $( '#back-lid' );
     this.noteList = $( '#note-list' );
+    this.menuWrapper = $( '#menu-wrapper' );
 
-    $( '.note-setting-btn' ).on( 'click', function () {
-        var id = this.getAttribute( 'note-id' ),
-            note = $( '#note' + id ),
-            title = note.find( '.note-title' ).text();
 
-        menuManager.openMenu( '#note-setting', title, note );
-    } );
 
     /* ------------------- open menu btn --------------------- */
 
@@ -39,23 +35,36 @@ app.init = function () {
         menuManager.openMenu( '#note-add-setting' );
     } );
 
-    // when click "done" on edit note activity
-    $( '#note-edit-submit' ).on( 'click', function () {
+    // using bubbling, calling children first
+    $( '.note-setting-btn' ).each( function () {
+        this.addEventListener( 'click', function ( event ) {
+            var id = this.getAttribute( 'note-id' ),
+                note = $( '#note' + id ),
+                title = note.find( '.note-title' ).text();
+
+            menuManager.openMenu( '#note-setting', title, note );
+            event.stopPropagation();
+        } );
 
     } );
+
 
     /* ---------------- add note menu ----------------------- */
 
     $( '.setting-item[data-type="note-new"]' ).on( 'click', function () {
-        activityManager.openActivity( 'note-new', '#note-edit' );
+        activityManager.openActivity( 'new', '#note-edit' );
+        menuManager.closeMenu();
     } );
+
 
     /* ---------------- note settings menu ----------------------- */
 
     $( '.setting-item[data-type="note-edit"]' ).on( 'click', function () {
         var thisNote = menuManager.associateItem;
 
-        activityManager.openActivity( 'note-edit', '#note-edit', thisNote );
+        activityManager.closeActivity();
+        activityManager.openActivity( 'edit', '#note-edit', thisNote );
+        menuManager.closeMenu();
     } );
 
     $( '.setting-item[data-type="note-delete"]' ).on( 'click', function () {
@@ -64,9 +73,20 @@ app.init = function () {
     } );
 
 
-    $( '.setting-item[data-type="delete"]' ).on( 'click', function () {
+    $( '.setting-item[data-type="note-detail"]' ).on( 'click', function () {
 
     } );
+
+    /* ---------------- open view note activity ------------------- */
+
+    $( '.note' ).each( function () {
+        this.addEventListener( 'click', function () {
+            app.currentFocusNote = this.getAttribute( 'note-id' );
+            activityManager.openActivity( 'view', '#note-view', $( this ) );
+        } );
+    } );
+
+
 
     /* ---------------- Edit note activity ------------------- */
 
@@ -88,12 +108,20 @@ app.init = function () {
         activityManager.closeActivity();
     } );
 
+    // when click "done" on edit note activity
+    $( '#note-edit-submit' ).on( 'click', function () {
+
+    } );
+
+
+    /* ---------------- other ------------------- */
 
     this.backLid.on( 'click', function () {
         menuManager.closeMenu();
     } );
 
 };
+
 
 app.addNote = function ( title, content ) {
 
@@ -119,7 +147,7 @@ menuManager.openMenu = function ( menuId, title, item ) {
     if ( title )
         menu.find( '.menu-title' ).text( title );
 
-    app.backLid.css( {
+    app.menuWrapper.css( {
         'visibility': 'visible'
     } );
 
@@ -139,7 +167,7 @@ menuManager.closeMenu = function () {
             'visibility': ''
         } );
 
-        app.backLid.css( {
+        app.menuWrapper.css( {
             'visibility': ''
         } );
 
@@ -147,31 +175,35 @@ menuManager.closeMenu = function () {
     }
 };
 
-activityManager.initActivity = function ( activity, activityDom, dom ) {
+activityManager.editActivity = function ( activity, activityDom, dom ) {
     var man = this;
 
+    man.currentActivity.activityTitle = activityDom.find( '.activity-title' );
     man.currentActivity.title = activityDom.find( '#note-edit-title' );
     man.currentActivity.content = activityDom.find( '#note-edit-content' );
     man.currentActivity.submit = activityDom.find( '#note-edit-submit' );
 
-    if ( activity === 'note-edit' ) {
+    if ( activity === 'edit' ) {
         var title = dom.find( '.note-title' ).text(),
             content = dom.find( '.note-content' ).text();
+
         man.currentActivity.title.val( title );
         man.currentActivity.content.val( content );
     }
 
+    man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
+
     // a note must have title
-    man.currentActivity.title.on( 'keyup', function () {
+    man.currentActivity.title.off( 'keyup' ).on( 'keyup', function () {
         man.isActivityEdited = true;
         man.currentActivity.submit.removeAttr( 'disabled' );
         man.currentActivity.title.off( 'keyup' );
     } );
 
     // only content can't be submit on new note
-    man.currentActivity.content.on( 'keyup', function () {
+    man.currentActivity.content.off( 'keyup' ).on( 'keyup', function () {
         man.isActivityEdited = true;
-        if ( activity == 'note-edit' )
+        if ( activity == 'edit' )
             man.currentActivity.submit.removeAttr( 'disabled' );
 
         man.currentActivity.content.off( 'keyup' );
@@ -186,9 +218,29 @@ activityManager.initActivity = function ( activity, activityDom, dom ) {
     } );
 };
 
-// dom is the related html dom that a new activity 
-// can fetch data from
-activityManager.openActivity = function ( activity, activityId, dom ) {
+activityManager.newActivity = activityManager.editActivity;
+
+// filling info into single note view
+activityManager.viewActivity = function ( activity, activityDom, dom ) {
+    var viewTitle = activityDom.find( '#note-view-title' ),
+        viewDate = activityDom.find( '#note-view-date' ),
+        viewContent = activityDom.find( '#note-view-content' ),
+        viewSettingBtn = activityDom.find( '.note-setting-btn' ),
+        id = dom.attr( 'note-id' ),
+        title = dom.find( '.note-title' ).text(),
+        date = dom.find( '.note-date' ).text(),
+        content = dom.find( '.note-content' ).text();
+
+
+    viewTitle.text( title );
+    viewDate.text( date );
+    viewContent.text( content );
+    viewSettingBtn.attr( 'note-id', id );
+};
+
+// associateItemDom is the related html dom 
+//that a new activity can fetch data from
+activityManager.openActivity = function ( activity, activityId, associateItemDom ) {
     var activityDom = $( activityId );
 
     activityDom.css( {
@@ -200,7 +252,7 @@ activityManager.openActivity = function ( activity, activityId, dom ) {
         activity: activity
     };
 
-    this.initActivity( activity, activityDom, dom );
+    this[activity + 'Activity']( activity, activityDom, associateItemDom );
 };
 
 activityManager.closeActivity = function () {
@@ -210,13 +262,15 @@ activityManager.closeActivity = function () {
         } );
         this.currentActivity = null;
     }
+
+    menuManager.closeMenu();
 };
 
 /**
  * clear data that have been entered 
  */
 activityManager.clearActivity = function () {
-    if ( this.isActivityEdited || this.currentActivity.activity === 'note-edit' ) {
+    if ( this.isActivityEdited || this.currentActivity.activity === 'edit' ) {
         this.currentActivity.title.val( '' );
         this.currentActivity.content.val( '' );
         this.isActivityEdited = false;

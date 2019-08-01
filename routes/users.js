@@ -91,6 +91,8 @@ router.get( '/', function ( req, res, next ) {
 
   view.noteEdit = tool.render( 'note-edit', noteEditView );
 
+  view.noteView = tool.render( 'note-view', noteEditView );
+
   view.userData = tool.fetchNoteData( userFile );
 
   view.body = tool.render( 'user', view );

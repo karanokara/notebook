@@ -47,8 +47,15 @@ body {
     cursor: pointer;
 }
 
-.back-lid {
+.menu-wrapper {
     visibility: hidden;
+    height: 100%;
+    width: 100%;
+    z-index: 1031;
+}
+
+.back-lid {
+    position: absolute;
     height: 100%;
     width: 100%;
     background: #00000042;
@@ -60,6 +67,10 @@ body {
     right: 20px;
     border-radius: 50%;
     padding: .8rem;
+}
+
+.note-date-container {
+    font-size: .8rem;
 }
 
 .activity {
