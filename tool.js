@@ -7,9 +7,19 @@ var tools = {
      * root of path this file folder is ../notebook
      */
     readFile: function ( path ) {
+        // read file synchronously
+        // must stop here to be done 
         var buffer = fs.readFileSync( path );
-
+        //console.log( buffer );
         return buffer.toString();
+    },
+    /**
+     * synchronously write file
+     * @param {*} fileName 
+     * @param {*} data 
+     */
+    writeFile: function ( fileName, data ) {
+        fs.writeFileSync( fileName, data )
     },
     /**
      * render with template
@@ -30,8 +40,9 @@ var tools = {
         var dataStr = this.readFile( 'data/' + fileName + '.json' );
         return JSON.parse( dataStr );
     },
-    writeData: function ( fileName ) {
-
+    wirteNoteData: function ( fileName, data ) {
+        var dataStr = JSON.stringify( data );
+        this.writeFile( 'data/' + fileName + '.json', dataStr );
     },
 };
 

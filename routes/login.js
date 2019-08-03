@@ -4,14 +4,14 @@ var view = require( './view' );
 var router = express.Router();
 
 var loginView = {
-  siteTitle: 'Notebook - Login',
-  signInTitle: 'A Simple Notebook',
-  bodyClasses: 'login',
-  headScripts: [
+    siteTitle: 'Notebook - Login',
+    signInTitle: 'A Simple Notebook',
+    bodyClasses: 'login',
+    headScripts: [
 
-  ],
-  logoImage: '/files/images/note-no-shadow.svg',
-  copyright: '2019, A little project'
+    ],
+    logoImage: '/files/images/note-no-shadow.svg',
+    copyright: '2019, A little project'
 };
 
 
@@ -19,12 +19,12 @@ var loginView = {
 
 /* GET home page. */
 router.get( '/', function ( req, res, next ) {
-  view.extend( loginView );
+    view.extend( loginView );
 
-  view.body = tool.render( 'login', view );
+    view.body = tool.render( 'login', view );
 
-  // render index.html using view obj
-  res.render( 'index', view );
+    // render index.html using view obj
+    res.render( 'index', view );
 
 } );
 
