@@ -19,6 +19,7 @@ body {
 
 .app-wrapper {
     max-width: 570px;
+    width: 100%;
 }
 
 
@@ -71,6 +72,10 @@ body {
 
 .note-date-container {
     font-size: .8rem;
+}
+
+.note-empty {
+    display: none;
 }
 
 .activity {

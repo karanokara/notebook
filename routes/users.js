@@ -1,5 +1,6 @@
 var express = require( 'express' );
 var tool = require( '../tool' );
+var database = require( '../database' );
 var view = require( './view' );
 var router = express.Router();
 
@@ -81,7 +82,7 @@ var noteEditView = {
 
 /* GET users listing. */
 router.get( '/', function ( req, res, next ) {
-  var userFile = 'user';
+  var username = 'happy';
 
   view.extend( userView );
   view.menus.length = 0;
@@ -93,7 +94,7 @@ router.get( '/', function ( req, res, next ) {
 
   view.noteView = tool.render( 'note-view', noteEditView );
 
-  view.userData = tool.fetchNoteData( userFile );
+  view.userData = database.get( username );
 
   view.body = tool.render( 'user', view );
 

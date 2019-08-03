@@ -29,7 +29,10 @@ var tools = {
     fetchNoteData: function ( fileName ) {
         var dataStr = this.readFile( 'data/' + fileName + '.json' );
         return JSON.parse( dataStr );
-    }
+    },
+    writeData: function ( fileName ) {
+
+    },
 };
 
 
