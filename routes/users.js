@@ -76,7 +76,7 @@ var noteAddView = {
 };
 
 var noteEditView = {
-    backBtn: tool.readFile( 'public/images/left-arrow.svg' ),
+    backBtn: tool.readFile( 'public/images/arrow-left.svg' ),
     deleteBtn: tool.readFile( 'public/images/delete.svg' ),
 }
 

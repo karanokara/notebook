@@ -16,6 +16,13 @@ database.userLogin = function ( username, givenPassword ) {
 
     if ( obj ) {
         if ( obj['password'] === givenPassword ) {
+            var last = obj['currentLogin'];
+
+            obj['lastLogin'] = last;
+            obj['lastLoginString'] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
+            obj['currentLogin'] = moment().valueOf();
+            this.update();
+
             return {
                 status: 1,
                 data: obj
@@ -79,6 +86,8 @@ database.deleteNote = function ( username, noteId ) {
  */
 database.editNote = function ( username, noteId ) {
 
+
+    this.update();
 };
 
 /**
