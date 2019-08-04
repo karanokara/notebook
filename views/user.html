@@ -1,66 +1,63 @@
-<div id="app-wrapper" class="app-wrapper mx-auto position-relative">
-
-    <main role="main" class="container mb-5">
-        <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
-            <img class="mr-3" src="{{logoImage}}" alt="" width="50" height="50">
-            <div class="">
-                <h6 class="mb-0">Notebook</h6>
-                <small class="text-secondary">@{{userData.name}}</small>
-            </div>
-            <div class="ml-auto">
-                <button id="app-setting-btn" type="button" class="btn btn-sm app-setting-btn bg-transparent" alt="setting"><img class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
-            </div>
+<main role="main" class="container mb-5">
+    <div class="app-header d-flex align-items-center p-3 my-3 text-dark rounded shadow-sm">
+        <img class="mr-3" src="{{logoImage}}" alt="" width="50" height="50">
+        <div class="">
+            <h6 class="mb-0">Notebook</h6>
+            <small class="text-secondary">@{{userData.name}}</small>
         </div>
-
-        <div class="d-flex rounded my-3">
-            <button id="order-btn" type="button" class=" py-2 pr-2 btn btn-sm order-btn bg-transparent" order="{{userData.settings.noteOrderDirection}}"><span class="order-name font-weight-bold text-secondary">{{userData.settings.noteOrderName}}</span><img id="order-img-up" class="order-img ml-1" src="/files/images/arrow-up.svg" alt="" width="24" height="24"><img id="order-img-down" class="order-img ml-1" src="/files/images/arrow-down.svg" alt="" width="24" height="24"></button>
-            <div id="last-login" class="btn-sm py-2 pr-2 ml-auto last-login text-secondary">Last login: {{userData.lastLoginString}}</div>
+        <div class="ml-auto">
+            <button id="app-setting-btn" type="button" class="btn btn-sm app-setting-btn bg-transparent" alt="setting"><img class="" src="{{userSettingBtnImage}}" alt="" width="24" height="24"></button>
         </div>
-
-        <div id="note-list" class="note-list">
-
-            {{#userData.list}}
-            <div id="note{{noteId}}" class="note my-3 p-3 bg-white rounded shadow-sm" note-id="{{noteId}}">
-                <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
-                    <div class="note-title-tag">
-                        <img class="" src="/files/images/{{type}}.svg" alt="" width="22" height="22">
-                        <span class="note-title">{{title}}</span>
-                    </div>
-
-                    <button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="{{noteId}}">
-                        <img class="" src="/files/images/note-setting.svg" alt="" width="24" height="24">
-                    </button>
-
-                </h6>
-                <div class="text-muted pt-2">
-                    <div class="note-date-container text-secondary mb-1">Last update: <span class="note-date">{{#lastUpdate}}{{.}}{{/lastUpdate}}{{^lastUpdate}}{{create}}{{/lastUpdate}}</span></div>
-                    <p class="note-content d-none media-body pb-3 mb-0 small lh-125">{{note}}</p>
-                    <p class="note-content-show media-body pb-3 mb-0 small lh-125">{{note}}</p>
-                </div>
-            </div>
-            {{/userData.list}}
-            <div id="note-empty" class="note-empty mt-5 py-5">
-                <div class="d-flex flex-column justify-content-center align-items-center py-5 mt-5">
-                    <div class="empty-image">
-                        <img class="" src="/files/images/empty-file.svg" alt="" width="140" height="140">
-                    </div>
-                    <h4 class="empty-title py-4 text-secondary">Notebook is empty!</h4>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <div id="note-add-btn" class="note-add-btn shadow bg-white">{{&noteAddBtnImage}}</div>
-
-    <div id="menu-wrapper" class="menu-wrapper fixed-top">
-        <div id="back-lid" class="back-lid"></div>
-        {{#menus}}
-        {{&.}}
-        {{/menus}}
     </div>
 
-    {{&noteEdit}}
+    <div class="d-flex rounded my-3">
+        <button id="order-btn" type="button" class=" py-2 pr-2 btn btn-sm order-btn bg-transparent" order="{{userData.settings.noteOrderDirection}}"><span class="order-name font-weight-bold text-secondary">{{userData.settings.noteOrderName}}</span><img id="order-img-up" class="order-img ml-1" src="/files/images/arrow-up.svg" alt="" width="24" height="24"><img id="order-img-down" class="order-img ml-1" src="/files/images/arrow-down.svg" alt="" width="24" height="24"></button>
+        <div id="last-login" class="btn-sm py-2 pr-2 ml-auto last-login text-secondary">Last login: {{userData.lastLoginString}}</div>
+    </div>
 
-    {{&noteView}}
+    <div id="note-list" class="note-list">
+
+        {{#userData.list}}
+        <div id="note{{noteId}}" class="note my-3 p-3 bg-white rounded shadow-sm" note-id="{{noteId}}">
+            <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
+                <div class="note-title-tag">
+                    <img class="" src="/files/images/{{type}}.svg" alt="" width="22" height="22">
+                    <span class="note-title">{{title}}</span>
+                </div>
+
+                <button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="{{noteId}}">
+                    <img class="" src="/files/images/note-setting.svg" alt="" width="24" height="24">
+                </button>
+
+            </h6>
+            <div class="text-muted pt-2">
+                <div class="note-date-container text-secondary mb-1">Last update: <span class="note-date">{{#lastUpdate}}{{.}}{{/lastUpdate}}{{^lastUpdate}}{{create}}{{/lastUpdate}}</span></div>
+                <p class="note-content d-none media-body pb-3 mb-0 small lh-125">{{note}}</p>
+                <p class="note-content-show media-body pb-3 mb-0 small lh-125">{{note}}</p>
+            </div>
+        </div>
+        {{/userData.list}}
+        <div id="note-empty" class="note-empty mt-5 py-5">
+            <div class="d-flex flex-column justify-content-center align-items-center py-5 mt-5">
+                <div class="empty-image">
+                    <img class="" src="/files/images/empty-file.svg" alt="" width="140" height="140">
+                </div>
+                <h4 class="empty-title py-4 text-secondary">Notebook is empty!</h4>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<div id="note-add-btn" class="note-add-btn shadow bg-white">{{&noteAddBtnImage}}</div>
+
+<div id="menu-wrapper" class="menu-wrapper fixed-top">
+    <div id="back-lid" class="back-lid"></div>
+    {{#menus}}
+    {{&.}}
+    {{/menus}}
 </div>
+
+{{&noteEdit}}
+
+{{&noteView}}

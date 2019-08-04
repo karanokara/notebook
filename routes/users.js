@@ -13,6 +13,7 @@ var userView = {
     noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
     noteAddBtnImage: tool.readFile( 'public/images/add.svg' ),
     logoImage: '/files/images/note-no-shadow.svg',
+
 };
 
 var appSettingView = {

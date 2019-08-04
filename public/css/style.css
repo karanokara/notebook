@@ -83,3 +83,11 @@ body {
     height: 100%;
 }
 
+.message-bar {
+    position: fixed;
+    z-index: 1033 ;
+    bottom: 0;
+    width: 100%;
+    -webkit-transform: translate(0,100%);
+    transform: translate(0,100%);
+}

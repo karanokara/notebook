@@ -5,6 +5,9 @@ var app = {
     currentFocusNote: null,
     editView: null,
     viewView: null,
+    messageBar: {
+        dom: null,
+    },
 };
 
 var menuManager = {
@@ -127,6 +130,50 @@ app.init = function () {
     this.changeNoteOrder();
     this.trimNote();
     this.sizeNoteEditView();
+};
+
+app.login = function () {
+    var form = $( '#login-form' ),
+        username = form.find( '#input-username' ),
+        password = form.find( '#input-password' );
+
+    this.messageBar.dom = $( '#message-bar' );
+    this.messageBar.isShowed = 0;
+
+    form.on( 'submit', function ( evt ) {
+        evt.preventDefault();
+
+        var name = username.val(),
+            pass = password.val();
+
+    } )
+};
+
+app.messageBar.show = function ( msg ) {
+    var _this = this;
+
+    _this.dom.find( '.message-content' ).text( msg );
+    _this.isShowed = 1;
+    TweenMax.to( _this.dom, .3, {
+        y: '0%', ease: Power1.easeOut, onComplete: function () {
+            _this.hide( 5 );
+        }
+    } );
+};
+
+app.messageBar.hide = function ( delay ) {
+    var _this = this;
+    if ( !_this.isShowed )
+        return;
+
+    if ( delay == undefined )
+        delay = 0;
+
+    TweenMax.to( _this.dom, .3, {
+        y: '100%', ease: Power1.easeOut, delay: delay, onComplete: function () {
+            _this.isShowed = 0;
+        }
+    } );
 };
 
 
@@ -325,6 +372,8 @@ activityManager.clearActivity = function () {
 };
 
 $( document ).ready( function () {
+    app.login();
+
     app.init();
 } );
 
