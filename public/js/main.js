@@ -22,7 +22,7 @@ app.init = function () {
     this.backLid = $( '#back-lid' );
     this.noteList = $( '#note-list' );
     this.menuWrapper = $( '#menu-wrapper' );
-
+    this.orderBtn = $( '#order-btn' );
 
 
     /* ------------------- open menu btn --------------------- */
@@ -120,6 +120,8 @@ app.init = function () {
         menuManager.closeMenu();
     } );
 
+
+    this.changeNoteOrder();
 };
 
 
@@ -139,6 +141,16 @@ app.deleteNote = function ( noteDom ) {
     noteDom.remove();
 
     // update server side
+};
+
+/**
+ * change note listing order
+ */
+app.changeNoteOrder = function () {
+
+    this.orderBtn.find( '.order-img' ).css( 'display', 'none' );
+    this.orderBtn.find( '#order-img-' + this.orderBtn.attr( 'order' ) ).css( 'display', '' );
+
 };
 
 menuManager.openMenu = function ( menuId, title, item ) {

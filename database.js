@@ -59,8 +59,23 @@ database.get = function ( username ) {
 /**
  * Add a new user
  */
-database.addUser = function () {
+database.addUser = function ( username, password, name ) {
+    var user = {
+        "username": username,
+        "password": password,
+        "name": name,
+        "lastLogin": null,
+        "currentLogin": moment().valueOf(),
+        "lastLoginString": "",
+        "list": [],
+        "settings": {
+            "noteOrderName": "Name",
+            "noteOrderDirection": "down",
+            "noteDisplay": "list"
+        }
+    };
 
+    this.data.push( user );
     this.update();
 };
 
@@ -84,8 +99,21 @@ database.deleteNote = function ( username, noteId ) {
 /**
  * edit note by username, noteId
  */
-database.editNote = function ( username, noteId ) {
+database.editNote = function ( username, noteId, notetitle, noteContent ) {
+    var list = this.get( username ).list,
+        note = null,
+        found = 0;
 
+    for ( var i = 0; i < list.size && !found; ++i ) {
+        note = list[i];
+        if ( note['noteId'] == noteId ) {
+            found = 1;
+        }
+    }
+
+    note['title'] = notetitle;
+    note['note'] = noteContent;
+    note['lastUpdate'] = moment().format( 'YYYY/MM/DD - HH:mm' );
 
     this.update();
 };
@@ -101,7 +129,7 @@ database.addNote = function ( username, noteTitle, noteContent ) {
             "noteId": noteId,
             "type": "file",
             "lastUpdate": null,
-            "create": moment().valueOf(),
+            "create": moment().format( 'YYYY/MM/DD - HH:mm' ),
             "note": noteContent,
         };
 
