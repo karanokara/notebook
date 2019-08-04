@@ -28,13 +28,14 @@
                     </div>
 
                     <button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="{{noteId}}">
-                        <img class="" src="{{noteSettingBtnImage}}" alt="" width="24" height="24">
+                        <img class="" src="/files/images/note-setting.svg" alt="" width="24" height="24">
                     </button>
 
                 </h6>
                 <div class="text-muted pt-2">
                     <div class="note-date-container text-secondary mb-1">Last update: <span class="note-date">{{#lastUpdate}}{{.}}{{/lastUpdate}}{{^lastUpdate}}{{create}}{{/lastUpdate}}</span></div>
-                    <p class="note-content media-body pb-3 mb-0 small lh-125">{{note}}</p>
+                    <p class="note-content d-none media-body pb-3 mb-0 small lh-125">{{note}}</p>
+                    <p class="note-content-show media-body pb-3 mb-0 small lh-125">{{note}}</p>
                 </div>
             </div>
             {{/userData.list}}

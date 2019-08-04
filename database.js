@@ -111,11 +111,15 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
         }
     }
 
+    if ( !found )
+        return 0;
+
     note['title'] = notetitle;
     note['note'] = noteContent;
     note['lastUpdate'] = moment().format( 'YYYY/MM/DD - HH:mm' );
 
     this.update();
+    return 1;
 };
 
 /**

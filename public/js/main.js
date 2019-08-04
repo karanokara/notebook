@@ -1,9 +1,10 @@
 
-
 var app = {
     backLid: null,
     noteList: null,
     currentFocusNote: null,
+    editView: null,
+    viewView: null,
 };
 
 var menuManager = {
@@ -23,6 +24,8 @@ app.init = function () {
     this.noteList = $( '#note-list' );
     this.menuWrapper = $( '#menu-wrapper' );
     this.orderBtn = $( '#order-btn' );
+    this.editView = $( '#note-edit' );
+    this.viewView = $( '#note-view' );
 
 
     /* ------------------- open menu btn --------------------- */
@@ -52,7 +55,7 @@ app.init = function () {
     /* ---------------- add note menu ----------------------- */
 
     $( '.setting-item[data-type="note-new"]' ).on( 'click', function () {
-        activityManager.openActivity( 'new', '#note-edit' );
+        activityManager.openActivity( 'new', 'edit' );
         menuManager.closeMenu();
     } );
 
@@ -63,7 +66,7 @@ app.init = function () {
         var thisNote = menuManager.associateItem;
 
         activityManager.closeActivity();
-        activityManager.openActivity( 'edit', '#note-edit', thisNote );
+        activityManager.openActivity( 'edit', 'edit', thisNote );
         menuManager.closeMenu();
     } );
 
@@ -82,7 +85,7 @@ app.init = function () {
     $( '.note' ).each( function () {
         this.addEventListener( 'click', function () {
             app.currentFocusNote = this.getAttribute( 'note-id' );
-            activityManager.openActivity( 'view', '#note-view', $( this ) );
+            activityManager.openActivity( 'view', 'view', $( this ) );
         } );
     } );
 
@@ -122,6 +125,8 @@ app.init = function () {
 
 
     this.changeNoteOrder();
+    this.trimNote();
+    this.sizeNoteEditView();
 };
 
 
@@ -142,6 +147,34 @@ app.deleteNote = function ( noteDom ) {
 
     // update server side
 };
+
+app.trimNote = function ( noteId ) {
+    if ( noteId != undefined ) {
+        console.log( '111' );
+    }
+    else {
+        console.log( '222' );
+
+        this.noteList.find( '.note' ).each( function () {
+            var content = $( this ).find( '.note-content-show' ),
+                text = content.text();
+
+            content.text( text.substr( 0, 100 ) + ' . . .' );
+        } );
+    }
+};
+
+app.sizeNoteEditView = function () {
+    var sum = app.editView.find( '.activity-guide' ).outerHeight( true ) +
+        app.editView.find( '.note-title-area' ).outerHeight( true ) +
+        app.editView.find( '.note-submit-area' ).outerHeight( true ),
+        total = app.editView.height();
+
+    app.editView.find( '#note-edit-content' ).css( {
+        'height': total - sum - 5
+    } );
+
+}
 
 /**
  * change note listing order
@@ -253,7 +286,7 @@ activityManager.viewActivity = function ( activity, activityDom, dom ) {
 // associateItemDom is the related html dom 
 //that a new activity can fetch data from
 activityManager.openActivity = function ( activity, activityId, associateItemDom ) {
-    var activityDom = $( activityId );
+    var activityDom = app[activityId + 'View'];
 
     activityDom.css( {
         'visibility': 'visible'
