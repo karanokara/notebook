@@ -8,6 +8,7 @@ var app = {
     messageBar: {
         dom: null,
     },
+    ajaxResponse: null,
 };
 
 var menuManager = {
@@ -144,7 +145,15 @@ app.login = function () {
         evt.preventDefault();
 
         var name = username.val(),
-            pass = password.val();
+            pass = password.val(),
+            data = {
+                username: name,
+                password: pass,
+            };
+
+
+        app.sendData( '/validate', data, null, null );
+
 
     } )
 };
@@ -197,10 +206,11 @@ app.deleteNote = function ( noteDom ) {
 
 app.trimNote = function ( noteId ) {
     if ( noteId != undefined ) {
-        console.log( '111' );
+        // only trim a specific note
+
+
     }
     else {
-        console.log( '222' );
 
         this.noteList.find( '.note' ).each( function () {
             var content = $( this ).find( '.note-content-show' ),
@@ -232,6 +242,41 @@ app.changeNoteOrder = function () {
     this.orderBtn.find( '#order-img-' + this.orderBtn.attr( 'order' ) ).css( 'display', '' );
 
 };
+
+app.sendData = function ( target, data, start, complete ) {
+    var url = location.origin + target;
+
+    $.ajax( {
+        url: url,
+        data: data,
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',  // data send
+        dataType: 'json',   // data format comes back, a obj
+        beforeSend: function () {
+            if ( start )
+                start();
+        },
+        complete: function () {
+            if ( complete )
+                complete();
+        },
+        success: function ( data, status, xhr ) {
+            console.log( data );
+            console.log( status );
+            console.log( xhr );
+
+            app.ajaxResponse = xhr;
+
+        },
+        error: function ( xhr, status, error ) {
+            console.log( status );
+            console.log( error );
+            console.log( xhr );
+            alert( 'error' );
+            app.ajaxResponse = xhr;
+        }
+    } );
+}
 
 menuManager.openMenu = function ( menuId, title, item ) {
     var menu = $( menuId );

@@ -66,7 +66,7 @@ database.addUser = function ( username, password, name ) {
         "name": name,
         "lastLogin": null,
         "currentLogin": moment().valueOf(),
-        "lastLoginString": "",
+        "lastLoginString": false,
         "list": [],
         "settings": {
             "noteOrderName": "Name",
@@ -77,6 +77,7 @@ database.addUser = function ( username, password, name ) {
 
     this.data.push( user );
     this.update();
+    return user;
 };
 
 /**

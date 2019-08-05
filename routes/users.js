@@ -1,4 +1,5 @@
 var express = require( 'express' );
+var passport = require( 'passport' );
 var tool = require( '../tool' );
 var database = require( '../database' );
 var view = require( './view' );
@@ -81,34 +82,38 @@ var noteEditView = {
 }
 
 /* GET users listing. */
-router.get( '/', function ( req, res, next ) {
-    var username = 'happy',
-        password = '123',
-        re = database.userLogin( username, password );
+router.get( '/',
+    passport.authenticate( 'local', {
+        failureRedirect: '/login',
+    } ),
+    function ( req, res, next ) {
+        var username = 'happy',
+            password = '123',
+            re = database.userLogin( username, password );
 
-    if ( re.status ) {
+        if ( re.status ) {
 
-        view.userData = re.data;
+            view.userData = re.data;
 
-        view.extend( userView );
-        view.menus.length = 0;
-        view.menus.push( tool.render( 'app-bottom-menu', appSettingView ) );
-        view.menus.push( tool.render( 'app-bottom-menu', noteSettingView ) );
-        view.menus.push( tool.render( 'app-bottom-menu', noteAddView ) );
+            view.extend( userView );
+            view.menus.length = 0;
+            view.menus.push( tool.render( 'app-bottom-menu', appSettingView ) );
+            view.menus.push( tool.render( 'app-bottom-menu', noteSettingView ) );
+            view.menus.push( tool.render( 'app-bottom-menu', noteAddView ) );
 
-        view.noteEdit = tool.render( 'note-edit', noteEditView );
+            view.noteEdit = tool.render( 'note-edit', noteEditView );
 
-        view.noteView = tool.render( 'note-view', noteEditView );
+            view.noteView = tool.render( 'note-view', noteEditView );
 
-        view.body = tool.render( 'user', view );
+            view.body = tool.render( 'user', view );
 
-        // console.log( view );
+            // console.log( view );
 
-        // render index.html using view obj
-        res.render( 'index', view );
-    }
-    else
-        res.send( re.msg );
-} );
+            // render index.html using view obj
+            res.render( 'index', view );
+        }
+        else
+            res.send( re.msg );
+    } );
 
 module.exports = router;
