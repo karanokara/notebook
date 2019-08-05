@@ -44,6 +44,16 @@ var tools = {
         var dataStr = JSON.stringify( data );
         this.writeFile( 'data/' + fileName + '.json', dataStr );
     },
+    /**
+     * authenticate user first
+    */
+    authenticateHere: function ( req, res, next ) {
+        if ( req.isAuthenticated() )
+            next();
+        else
+            res.redirect( '/login' );
+
+    },
 };
 
 

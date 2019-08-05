@@ -11,16 +11,19 @@ var database = {
  * if success, return user data
  * else, return message
  */
-database.userLogin = function ( username, givenPassword ) {
+database.userLogin = function ( username, givenPassword, isUsingPassword ) {
     var obj = this.get( username );
 
-    if ( obj ) {
-        if ( obj['password'] === givenPassword ) {
-            var last = obj['currentLogin'];
+    if ( isUsingPassword == undefined )
+        isUsingPassword = 1;
 
-            obj['lastLogin'] = last;
-            obj['lastLoginString'] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
-            obj['currentLogin'] = moment().valueOf();
+    if ( obj ) {
+        if ( !isUsingPassword || obj[ 'password' ] === givenPassword ) {
+            var last = obj[ 'currentLogin' ];
+
+            obj[ 'lastLogin' ] = last;
+            obj[ 'lastLoginString' ] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
+            obj[ 'currentLogin' ] = moment().valueOf();
             this.update();
 
             return {
@@ -47,8 +50,8 @@ database.userLogin = function ( username, givenPassword ) {
 database.get = function ( username ) {
 
     for ( var i = 0; i < this.size; ++i ) {
-        var obj = this.data[i];
-        if ( obj['username'] === username ) {
+        var obj = this.data[ i ];
+        if ( obj[ 'username' ] === username ) {
             return obj;
         }
     }
@@ -87,7 +90,7 @@ database.deleteNote = function ( username, noteId ) {
     var list = this.get( username ).list;
 
     for ( var i = 0; i < list.length; ++i ) {
-        if ( noteId == list[i]["noteId"] ) {
+        if ( noteId == list[ i ][ "noteId" ] ) {
             list.splice( i, 1 );
             this.update();
             return 1;
@@ -106,8 +109,8 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
         found = 0;
 
     for ( var i = 0; i < list.size && !found; ++i ) {
-        note = list[i];
-        if ( note['noteId'] == noteId ) {
+        note = list[ i ];
+        if ( note[ 'noteId' ] == noteId ) {
             found = 1;
         }
     }
@@ -115,9 +118,9 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
     if ( !found )
         return 0;
 
-    note['title'] = notetitle;
-    note['note'] = noteContent;
-    note['lastUpdate'] = moment().format( 'YYYY/MM/DD - HH:mm' );
+    note[ 'title' ] = notetitle;
+    note[ 'note' ] = noteContent;
+    note[ 'lastUpdate' ] = moment().format( 'YYYY/MM/DD - HH:mm' );
 
     this.update();
     return 1;
@@ -138,7 +141,7 @@ database.addNote = function ( username, noteTitle, noteContent ) {
             "note": noteContent,
         };
 
-    obj['list'].push( note );
+    obj[ 'list' ].push( note );
     this.update();
 
     return 1;

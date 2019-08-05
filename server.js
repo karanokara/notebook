@@ -6,6 +6,8 @@ var fs = require( 'fs' ); // this engine requires the fs module
 var loginRouter = require( './routes/login' );
 var usersRouter = require( './routes/users' );
 var server = express();
+var database = require( './database' );
+var tool = require( './tool' );
 var passport = require( 'passport' );
 var strategyLocal = require( 'passport-local' ).Strategy;
 //var strategyGoogle = require( 'p' );
@@ -15,7 +17,7 @@ var strategyLocal = require( 'passport-local' ).Strategy;
 server.engine( 'html', function ( filePath, view, callback ) {
     fs.readFile( filePath, function ( err, data ) {
         if ( err )
-            return callback( err );
+            return callback( err, '@error' );
 
         var renderedString = mustache.render( data.toString(), view );
         return callback( null, renderedString );
@@ -51,17 +53,34 @@ server.use( session( {
 server.use( passport.initialize() );
 server.use( passport.session() );
 
-
+/**
+ * call once after a user is authenticated
+ * user is put into the req.session.passport
+ */
 passport.serializeUser( function ( user, done ) {
-    console.log( '-----------' );
+    console.log( '> Storing User  - - - - - - - - ' );
     console.log( user );
 
+    // user is put into the req.session.passport
     done( null, user );
 } );
 
-passport.deserializeUser( function ( id, done ) {
+/**
+ * this fnc will be called every time once 
+ * a user has a session
+ * "user" is a specific user 
+ * can load different data according to which user
+ * having this session
+ */
+passport.deserializeUser( function ( user, done ) {
+    console.log( '> Loading user data - - - - - - -- - ' );
+
     // User.findById( id, function ( err, user ) {
-    //     done( err, user );
+    console.log( user );
+
+    // put data into req.user
+    done( null, user );
+
     // } );
 } );
 
@@ -81,21 +100,30 @@ passport.use( new strategyLocal(
         console.log( username );
         console.log( password );
 
-        if ( username == 'test' && password == 'logmein' )
-            return done( null, true, { message: 'succeed' } );
-        else
-            // 1st parameter is err in callback below
-            return done( null, false, { message: 'failed' } );
+        var info = database.userLogin( username, password );
+
+        if ( info.status ) {
+            info.data = tool.render( 'user', info.data );
+
+            // user is just username
+            // so session is storing username
+            return done( null, username, info );
+        }
+        else {
+            return done( null, false, info );
+        }
     }
 ) );
 
 /**
  * validate user login info
+ * this fnc can receive fail message from above,
+ * user fnc below instead
  */
 // server.post( '/validate',
 //     passport.authenticate( 'local', {
 //         session: true,
-//         successRedirect: '/login',
+//         // successRedirect: '/login',
 //         failWithError: true,    // enable fnc below to be called
 //     } ),
 //     // for success callback
@@ -121,25 +149,29 @@ passport.use( new strategyLocal(
 server.post( '/validate', function ( req, res, next ) {
     passport.authenticate( 'local', function ( err, user, info ) {
         // done( err, user, infor );    from above
-        console.log( res );
-        console.log( info );
-        console.log( user );
-        console.log( err );
 
         if ( err ) {
             return next( err );
         }
-        if ( !user ) {
-            res.status( 401 ).send( '{ "msg": "fail!"}' );
+        else if ( !user ) {
+            res.status( 401 ).send( JSON.stringify( info ) );
             return;
         }
+        else {
+            req.logIn( user, function ( err ) {
+                if ( err ) {
+                    return next( err );
+                }
 
-        req.logIn( 'mememe', function ( err ) {
-            if ( err ) { return next( err ); }
+                res.send( JSON.stringify( info ) );
 
-            res.send( '{ "msg": "success!"}' );
-
-        } );
+            } );
+        }
+        //console.log( res );
+        //console.log( info );
+        //console.log( user );
+        //console.log( err );
+        //console.log( req.session.passport );
 
     } )( req, res, next );
 } );
@@ -162,15 +194,11 @@ server.use( '/error', function ( req, res ) {
  * will be used as the final choice
  * 
  */
-server.use( function ( req, res ) {
-
-    // If it is a new session
-    // redirect to /login
-    res.redirect( '/login' );
-
+server.use( tool.authenticateHere, function ( req, res ) {
 
     // redirect to /users 
-    //res.redirect( '/user' );
+    // since it is authenticated
+    res.redirect( '/user' );
 
 
 } );
