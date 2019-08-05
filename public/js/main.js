@@ -152,7 +152,14 @@ app.login = function () {
             };
 
 
-        app.sendData( '/validate', data, null, null );
+        app.sendData( '/validate', data, null,
+            function ( data ) {
+                // change activity
+                activityManager.openActivity();
+            }, function () {
+                // others to do after complete
+            }
+        );
 
 
     } )
@@ -243,7 +250,7 @@ app.changeNoteOrder = function () {
 
 };
 
-app.sendData = function ( target, data, start, complete ) {
+app.sendData = function ( target, data, start, success, complete ) {
     var url = location.origin + target;
 
     $.ajax( {
@@ -265,15 +272,18 @@ app.sendData = function ( target, data, start, complete ) {
             console.log( status );
             console.log( xhr );
 
-            app.ajaxResponse = xhr;
+            if ( success )
+                success( data );
+            //app.ajaxResponse = xhr;
 
         },
         error: function ( xhr, status, error ) {
-            console.log( status );
             console.log( error );
+            console.log( status );
             console.log( xhr );
-            alert( 'error' );
-            app.ajaxResponse = xhr;
+            app.messageBar.show( xhr.responseJSON.msg )
+            //alert( 'error' );
+            //app.ajaxResponse = xhr;
         }
     } );
 }
@@ -328,7 +338,7 @@ activityManager.editActivity = function ( activity, activityDom, dom ) {
         man.currentActivity.content.val( content );
     }
 
-    man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
+    man.currentActivity.activityTitle.text( activity[ 0 ].toUpperCase() + activity.substr( 1 ) );
 
     // a note must have title
     man.currentActivity.title.off( 'keyup' ).on( 'keyup', function () {
@@ -378,7 +388,7 @@ activityManager.viewActivity = function ( activity, activityDom, dom ) {
 // associateItemDom is the related html dom 
 //that a new activity can fetch data from
 activityManager.openActivity = function ( activity, activityId, associateItemDom ) {
-    var activityDom = app[activityId + 'View'];
+    var activityDom = app[ activityId + 'View' ];
 
     activityDom.css( {
         'visibility': 'visible'
@@ -389,7 +399,7 @@ activityManager.openActivity = function ( activity, activityId, associateItemDom
         activity: activity
     };
 
-    this[activity + 'Activity']( activity, activityDom, associateItemDom );
+    this[ activity + 'Activity' ]( activity, activityDom, associateItemDom );
 };
 
 activityManager.closeActivity = function () {
