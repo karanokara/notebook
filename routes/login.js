@@ -19,12 +19,17 @@ var loginView = {
 
 /* GET home page. */
 router.get( '/', function ( req, res, next ) {
-    view.extend( loginView );
+    if ( req.isAuthenticated() ) {
+        res.redirect( '/user' );
+    }
+    else {
+        view.extend( loginView );
 
-    view.body = tool.render( 'login', view );
+        view.body = tool.render( 'login', view );
 
-    // render index.html using view obj
-    res.render( 'index', view );
+        // render index.html using view obj
+        res.render( 'index', view );
+    }
 
 } );
 

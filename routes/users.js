@@ -83,7 +83,7 @@ var noteEditView = {
 
 
 router.use( '/', function ( req, res, next ) {
-    console.log( 'In user.js: ---------------- ' );
+    console.log( 'In user.js: ---------------- session is: ' );
     console.log( req.session.passport );
     next();
 } );
