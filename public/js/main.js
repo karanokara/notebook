@@ -21,6 +21,8 @@ var app = {
         show: function ( msg ) {
             var _this = this;
 
+            this.init();
+
             _this.dom.find( '.message-content' ).text( msg );
             _this.isShowed = 1;
             anime.to( _this.dom, .3, {
@@ -32,6 +34,7 @@ var app = {
 
         hide: function ( delay ) {
             var _this = this;
+
             if ( !_this.isShowed )
                 return;
 
@@ -49,6 +52,10 @@ var app = {
                 }
             } );
         },
+        init: function () {
+            if ( !this.dom )
+                this.dom = $( '#message-bar' );
+        }
     },
 
     init: function () {
@@ -159,11 +166,6 @@ var app = {
             activityManager.closeActivity();
         } );
 
-        // when click "done" on edit note activity
-        $( '#note-edit-submit' ).on( 'click', function () {
-
-        } );
-
 
         /* ---------------- other ------------------- */
 
@@ -187,7 +189,6 @@ var app = {
             localSubmit = form.find( '#local-login-btn' ),
             googleSubmit = form.find( '#google-login-btn' );
 
-        this.messageBar.dom = $( '#message-bar' );
         this.messageBar.isShowed = 0;
 
         form.on( 'submit', function ( evt ) {
@@ -212,6 +213,7 @@ var app = {
                     _this.appWrapper.append( data.data );
                     _this.init();
                     activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
+                    history.pushState( null, 'note', '/user' );
                 },
                 // fail
                 function () {
@@ -285,6 +287,7 @@ var app = {
                     activityManager.removeActivity( 'note-edit-activity note-view-activity' );
                     $( '#menu-wrapper' ).remove();
                 } );
+                history.pushState( null, 'note', '/login' );
             },
             // fail
             function () {
@@ -299,15 +302,63 @@ var app = {
 
     },
 
-    addNote: function ( title, content ) {
+    addNote: function ( btn, title, content ) {
+        var _this = this;
 
-        this.noteList.append();
+        btn.attr( 'disabled', '' );
+
         // update server side
+        this.sendData( '/modify/add', {
+            title: title,
+            content: content,
+        }, null, function ( info ) {
+
+            activityManager.clearActivity();
+            activityManager.closeActivity();
+            _this.makeNote( info.id, title, content, info.date );
+            _this.messageBar.show( 'Successfully added a new note.' );
+        }, function ( info ) {
+            // enable submit btn
+            btn.attr( 'disabled', null );
+        }, null );
 
     },
+    /**
+     * generate html string of a new note element
+     * @param {number|string} id 
+     * @param {string} title 
+     * @param {string} content 
+     */
+    makeNote: function ( id, title, content, date ) {
+        var str = '' +
+            '<div id="note' + id + '" class="note my-3 p-3 bg-white rounded shadow-sm" note-id="' + id + '">' +
+            '<h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">' +
+            '<div class="note-title-tag" >' +
+            '<img class="" src="/files/images/file.svg" alt="" width="22" height="22">' +
+            '<span class="note-title">' + title + '</span>' +
+            '</div>' +
+            '<button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="' + id + '">' +
+            '<img class="" src="/files/images/note-setting.svg" alt="" width="24" height="24">' +
+            '</button>' +
+            '</h6>' +
+            '<div class="text-muted pt-2">' +
+            '<div class="note-date-container text-secondary mb-1">Last update: <span class="note-date">' + date + '</span></div>' +
+            '<p class="note-content d-none media-body pb-3 mb-0 small lh-125">' + content + '</p>' +
+            '<p class="note-content-show media-body pb-3 mb-0 small lh-125">' + content + '</p>' +
+            '</div>' +
+            '</div>';
 
-    makeNote: function () {
+        this.noteList.append( str );
+        var note = $( '#note' + id );
+        note.find( '.note-setting-btn' )[ 0 ].addEventListener( 'click', function ( event ) {
+            menuManager.openMenu( '#note-setting', title, note );
+            event.stopPropagation();
+        } );
 
+        note[ 0 ].addEventListener( 'click', function () {
+            app.currentFocusNote = this.getAttribute( 'note-id' );
+            activityManager.openActivity( 'view', '#note-view-activity', $( this ) );
+        } );
     },
 
     deleteNote: function ( noteDom ) {
@@ -497,7 +548,7 @@ var activityManager = {
             man.currentActivity.content.val( content );
         }
 
-        man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
+        man.currentActivity.activityTitle.text( activity[ 0 ].toUpperCase() + activity.substr( 1 ) );
 
         // a note must have title
         man.currentActivity.title.off( 'keyup' ).on( 'keyup', function () {
@@ -518,6 +569,7 @@ var activityManager = {
         man.currentActivity.submit.off( 'click' ).on( 'click', function () {
             // process data to server
             if ( !this.hasAttribute( 'disabled' ) ) {
+                app.addNote( $( this ), man.currentActivity.title.val(), man.currentActivity.content.val() );
 
             }
 
@@ -587,7 +639,7 @@ var activityManager = {
         } );
 
         if ( this.hasOwnProperty( activity + 'Activity' ) )
-            this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
+            this[ activity + 'Activity' ]( activity, newActivity.dom, associateItemDom );
 
         menuManager.closeMenu();
     },

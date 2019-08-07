@@ -116,14 +116,19 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
     }
 
     if ( !found )
-        return 0;
+        return {
+            status: 0,
+            msg: 'Note ' + notetitle + ' is not found.'
+        };
 
     note[ 'title' ] = notetitle;
     note[ 'note' ] = noteContent;
     note[ 'lastUpdate' ] = moment().format( 'YYYY/MM/DD - HH:mm' );
 
     this.update();
-    return 1;
+    return {
+        status: 1
+    };
 };
 
 /**
@@ -131,20 +136,26 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
  */
 database.addNote = function ( username, noteTitle, noteContent ) {
     var obj = this.get( username ),
-        noteId = obj.list.length + 1,
+        noteId = Number( obj.noteCount ) + 1,
+        create = moment().format( 'YYYY/MM/DD - HH:mm' ),
         note = {
             "title": noteTitle,
             "noteId": noteId,
             "type": "file",
             "lastUpdate": null,
-            "create": moment().format( 'YYYY/MM/DD - HH:mm' ),
+            "create": create,
             "note": noteContent,
         };
 
+    obj.noteCount = noteId;
     obj[ 'list' ].push( note );
     this.update();
 
-    return 1;
+    return {
+        status: 1,
+        id: noteId,
+        date: create
+    };
 };
 
 /**
