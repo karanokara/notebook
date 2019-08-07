@@ -34,22 +34,28 @@ view.extend = function ( default_ele, to_change ) {
     return default_ele;
 }
 
-view.appSettingView = function () {
+view.appSettingView = function ( username ) {
     return {
-        title: "Notebook",
+        title: 'User: ' + username,
         listingClasses: 'flex-column',
         settingId: 'app-setting',
         items: [
             {
-                itemName: 'Change username',
+                itemName: 'Change display name',
                 itemIcon: tool.readFile( 'public/images/person.svg' ),
-                settingStr: 'username'
+                settingStr: 'display-name'
 
             },
             {
                 itemName: 'Change password',
                 itemIcon: tool.readFile( 'public/images/key.svg' ),
                 settingStr: 'password'
+
+            },
+            {
+                itemName: 'Sign out',
+                itemIcon: tool.readFile( 'public/images/sign-out.svg' ),
+                settingStr: 'sign-out'
 
             }
         ]
@@ -120,7 +126,7 @@ view.userView = function ( userData ) {
 
     };
 
-    userView.menus.push( tool.render( 'app-bottom-menu', view.appSettingView() ) );
+    userView.menus.push( tool.render( 'app-bottom-menu', view.appSettingView( userView.username ) ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteSettingView() ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteAddView() ) );
 

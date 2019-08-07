@@ -22,10 +22,6 @@ body{
     height: 100%;
 }
 
-.app-wrapper[data-activity="login"]  {
-    height: 100%;
-}
-
 .app-header {
     background: linear-gradient(30deg, #e5ecf1,#f1f7f5);
 }
@@ -44,6 +40,9 @@ body{
     left: 0;
     right: 0;
     visibility: hidden;
+    opacity: 0;
+    -webkit-transform: translate(0,50%);
+    transform: translate(0,50%);
 }
 
 .note-add-btn,
@@ -63,6 +62,7 @@ body{
     height: 100%;
     width: 100%;
     background: #00000042;
+    opacity: 0;
 }
 
 .note-add-btn {

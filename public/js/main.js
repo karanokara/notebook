@@ -88,12 +88,25 @@ var app = {
 
         } );
 
+        /* ---------------- app setting menu ----------------------- */
+        $( '.setting-item[data-type="username"]' ).on( 'click', function () {
+
+        } );
+
+        $( '.setting-item[data-type="password"]' ).on( 'click', function () {
+
+        } );
+
+        $( '.setting-item[data-type="sign-out"]' ).on( 'click', function () {
+            app.logout();
+
+        } );
 
         /* ---------------- add note menu ----------------------- */
 
         $( '.setting-item[data-type="note-new"]' ).on( 'click', function () {
             activityManager.openActivity( 'new', '#note-edit-activity' );
-            menuManager.closeMenu();
+
         } );
 
 
@@ -103,7 +116,6 @@ var app = {
             var thisNote = menuManager.associateItem;
 
             activityManager.openActivity( 'edit', '#note-edit-activity', thisNote );
-            menuManager.closeMenu();
         } );
 
         $( '.setting-item[data-type="note-delete"]' ).on( 'click', function () {
@@ -199,20 +211,20 @@ var app = {
                     // change activity
                     _this.appWrapper.append( data.data );
                     _this.init();
-                    activityManager.openActivity( 'user', '#user-activity', null );
+                    activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
                 },
                 // fail
                 function () {
-                    username.attr( 'disabled', null );
-                    password.attr( 'disabled', null );
-                    localSubmit.attr( 'disabled', null );
-                    googleSubmit.attr( 'disabled', null );
 
                 },
                 // complete
                 function () {
                     // others to do after complete
 
+                    username.attr( 'disabled', null );
+                    password.attr( 'disabled', null );
+                    localSubmit.attr( 'disabled', null );
+                    googleSubmit.attr( 'disabled', null );
 
                 }
             );
@@ -226,6 +238,12 @@ var app = {
             localSubmit.attr( 'disabled', '' );
             googleSubmit.attr( 'disabled', '' );
 
+            var name = username.val(),
+                pass = password.val(),
+                data = {
+                    username: name,
+                    password: pass,
+                };
 
 
 
@@ -233,6 +251,34 @@ var app = {
 
     },
     logout: function () {
+        if ( !confirm( 'Are you sure to sign out?' ) )
+            return;
+
+        var _this = this;
+
+        _this.sendData( '/logout', null, null,
+            // success
+            function ( data ) {
+                // change activity
+                _this.appWrapper.append( data.data );
+                _this.login();
+                _this.isInit = false;
+                activityManager.openActivity( 'login', '#login-activity', null, function () {
+                    activityManager.disconnectActivity();
+                    activityManager.removeActivity( 'note-edit-activity note-view-activity' );
+                    $( '#menu-wrapper' ).remove();
+                } );
+            },
+            // fail
+            function () {
+
+            },
+            // complete
+            function () {
+                // others to do after complete
+
+            }
+        );
 
     },
 
@@ -362,22 +408,33 @@ menuManager.openMenu = function ( menuId, title, item ) {
     } );
     this.openedMenu = menu;
 
+    anime.to( app.backLid, .2, { opacity: '1', ease: ease2.easeOut } );
+    anime.to( menu, .2, { y: '0%', opacity: '1', ease: ease2.easeOut } );
+
     // associate opened menu with item selected
     if ( item )
         this.associateItem = item;
 };
 
 menuManager.closeMenu = function () {
-    if ( this.openedMenu ) {
-        this.openedMenu.css( {
-            'visibility': ''
+    var _this = this;
+    if ( _this.openedMenu ) {
+
+        anime.to( app.backLid, .2, { opacity: '0', ease: ease2.easeOut, clearProps: 'all' } );
+        anime.to( this.openedMenu, .2, {
+            y: '50%', opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
+                _this.openedMenu.css( {
+                    'visibility': ''
+                } );
+
+                app.menuWrapper.css( {
+                    'visibility': ''
+                } );
+                _this.openedMenu = null;
+            }
         } );
 
-        app.menuWrapper.css( {
-            'visibility': ''
-        } );
 
-        this.openedMenu = null;
     }
 };
 
@@ -473,7 +530,7 @@ var activityManager = {
 
     // associateItemDom is the related html dom 
     //that a new activity can fetch data from
-    openActivity: function ( activity, activityId, associateItemDom ) {
+    openActivity: function ( activity, activityId, associateItemDom, callback ) {
         var _this = this,
             newActivity = {
                 prevActivity: _this.currentActivity,
@@ -507,14 +564,18 @@ var activityManager = {
                 _this.currentActivity.prevActivity.dom.addClass( 'fixed-top' );
                 _this.currentActivity.prevActivity.dom.removeClass( 'current' );
 
+                if ( callback )
+                    callback();
             }
         } );
 
         if ( this.hasOwnProperty( activity + 'Activity' ) )
             this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
+
+        menuManager.closeMenu();
     },
 
-    closeActivity: function () {
+    closeActivity: function ( callback ) {
         var _this = this;
         // ensure there is a activity to bring back
         if ( this.currentActivity.prevActivity ) {
@@ -545,6 +606,9 @@ var activityManager = {
 
                     --_this.activityCount;
                     _this.currentActivity = _this.currentActivity.prevActivity;
+
+                    if ( callback )
+                        callback();
                 },
                 clearProps: 'visibility,transform'
             } );
@@ -565,6 +629,29 @@ var activityManager = {
             this.currentActivity.submit.attr( 'disabled', '' );
         }
 
+    },
+    disconnectActivity: function () {
+        if ( this.currentActivity.prevActivity ) {
+            this.currentActivity.prevActivity.dom.remove();
+            this.currentActivity.prevActivity = null;
+            this.activityCount -= 1;
+            this.currentActivity.dom.css( { 'zIndex': '' } );
+        }
+    },
+    /**
+     * removed by activity id
+     * @param {string} except a string of activities id 
+     */
+    removeActivity: function ( idString ) {
+        var count = 0;
+        $( '.activity' ).each( function () {
+            if ( idString.includes( this.getAttribute( 'id' ) ) ) {
+                this.remove();
+                ++count;
+            }
+        } );
+
+        return count;
     },
     hasPrevActivity: function () {
         return ( this.currentActivity.prevActivity ) ? true : false;

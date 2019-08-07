@@ -177,6 +177,27 @@ server.post( '/validate', function ( req, res, next ) {
     } )( req, res, next );
 } );
 
+/**
+ * logout current user's session
+ */
+server.post( '/logout', function ( req, res, next ) {
+    if ( req.isAuthenticated ) {
+        var info = {
+            status: 1,
+            data: view.loginView().body,    // send the login activity back
+        }
+
+        res.send( JSON.stringify( info ) );
+    }
+    else {
+        res.status( 401 ).send( JSON.stringify( {
+            status: 0,
+            msg: 'User is not login.',
+        } ) );
+    }
+
+} );
+
 
 /**
  * Serving requests
