@@ -350,6 +350,7 @@ var app = {
 
         this.noteList.append( str );
         var note = $( '#note' + id );
+        this.trimNote( note );
         note.find( '.note-setting-btn' )[ 0 ].addEventListener( 'click', function ( event ) {
             menuManager.openMenu( '#note-setting', title, note );
             event.stopPropagation();
@@ -360,7 +361,36 @@ var app = {
             activityManager.openActivity( 'view', '#note-view-activity', $( this ) );
         } );
     },
+    editNote: function ( btn, id, title, content ) {
+        var _this = this;
 
+        btn.attr( 'disabled', '' );
+
+        // update server side
+        this.sendData( '/modify/edit', {
+            id: id,
+            title: title,
+            content: content,
+        }, null, function ( info ) {
+            activityManager.clearActivity();
+            activityManager.closeActivity();
+            _this.reviseNote( id, title, content, info.date );
+            _this.messageBar.show( 'Successfully edit a note.' );
+        }, function ( info ) {
+            // enable submit btn
+            btn.attr( 'disabled', null );
+        }, null );
+
+
+    },
+    reviseNote: function ( id, title, content, date ) {
+        var note = this.noteList.find( '#note' + id );
+
+        note.find( '.note-title' ).text( title );
+        note.find( '.note-content' ).text( content );
+        note.find( '.note-date' ).text( date );
+        this.trimNote( note );
+    },
     deleteNote: function ( noteDom ) {
 
         noteDom.remove();
@@ -368,19 +398,21 @@ var app = {
         // update server side
     },
 
-    trimNote: function ( noteId ) {
-        if ( noteId != undefined ) {
+    trimNote: function ( note ) {
+        var trim = function ( ele ) {
+            var content = $( ele ).find( '.note-content-show' ),
+                text = content.text();
+
+            content.text( text.substr( 0, 100 ) + ' . . .' );
+        };
+
+        if ( note != undefined ) {
             // only trim a specific note
-
-
+            trim( note );
         }
         else {
-
             this.noteList.find( '.note' ).each( function () {
-                var content = $( this ).find( '.note-content-show' ),
-                    text = content.text();
-
-                content.text( text.substr( 0, 100 ) + ' . . .' );
+                trim( this );
             } );
         }
     },
@@ -569,7 +601,10 @@ var activityManager = {
         man.currentActivity.submit.off( 'click' ).on( 'click', function () {
             // process data to server
             if ( !this.hasAttribute( 'disabled' ) ) {
-                app.addNote( $( this ), man.currentActivity.title.val(), man.currentActivity.content.val() );
+                if ( activity == 'edit' )
+                    app.editNote( $( this ), dom.attr( 'note-id' ), man.currentActivity.title.val(), man.currentActivity.content.val() )
+                else
+                    app.addNote( $( this ), man.currentActivity.title.val(), man.currentActivity.content.val() );
 
             }
 

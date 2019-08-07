@@ -93,11 +93,16 @@ database.deleteNote = function ( username, noteId ) {
         if ( noteId == list[ i ][ "noteId" ] ) {
             list.splice( i, 1 );
             this.update();
-            return 1;
+            return {
+                status: 1
+            };
         }
     }
 
-    return 0;
+    return {
+        status: 0,
+        msg: 'Note id:' + noteId + ' is not found.'
+    };
 };
 
 /**
@@ -123,11 +128,13 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
 
     note[ 'title' ] = notetitle;
     note[ 'note' ] = noteContent;
-    note[ 'lastUpdate' ] = moment().format( 'YYYY/MM/DD - HH:mm' );
+    var date = moment().format( 'YYYY/MM/DD - HH:mm' );
+    note[ 'lastUpdate' ] = date;
 
     this.update();
     return {
-        status: 1
+        status: 1,
+        date: date,
     };
 };
 

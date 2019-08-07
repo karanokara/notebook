@@ -32,10 +32,48 @@ router.post( '/add', function ( req, res, next ) {
     }
 
     res.status( 401 ).send( info.msg );
-} )
+} );
 
 
+router.post( '/edit', function ( req, res, next ) {
 
+    var username = req.session.passport.user,
+        id = req.body.id,
+        title = req.body.title,
+        content = req.body.content;
+
+    if ( !title || !content || !id )
+        return res.status( 404 ).send( 'No data received.' );
+
+    var info = database.editNote( username, id, title, content );
+
+    console.log( req.body );
+
+    if ( info.status ) {
+        res.send( JSON.stringify( info ) );
+    }
+
+    res.status( 401 ).send( info.msg );
+} );
+
+router.post( '/delete', function ( req, res, next ) {
+
+    var username = req.session.passport.user,
+        id = req.body.id;
+
+    if ( !id )
+        return res.status( 404 ).send( 'No data received.' );
+
+    var info = database.deleteNote( username, id );
+
+    console.log( req.body );
+
+    if ( info.status ) {
+        res.send( JSON.stringify( info ) );
+    }
+
+    res.status( 401 ).send( info.msg );
+} );
 
 
 
