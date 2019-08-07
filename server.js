@@ -5,13 +5,15 @@ var mustache = require( 'mustache' );
 var fs = require( 'fs' ); // this engine requires the fs module
 var loginRouter = require( './routes/login' );
 var usersRouter = require( './routes/users' );
+var modifyRouter = require( './routes/modify' );
+var googleRouter = require( './routes/google' );
 var server = express();
 var database = require( './database' );
 var tool = require( './tool' );
 var view = require( './routes/view' );
 var passport = require( 'passport' );
 var strategyLocal = require( 'passport-local' ).Strategy;
-//var strategyGoogle = require( 'p' );
+var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
 
 // define the template engine
@@ -148,8 +150,14 @@ passport.use( new strategyLocal(
 // );
 
 server.post( '/validate', function ( req, res, next ) {
+
+    /**
+     * authenticate here instead of just call it as a middleware
+     * done( err, user, infor );    from above is this callback function
+     * 
+     * otherwise, the default done() will send info back to client
+     */
     passport.authenticate( 'local', function ( err, user, info ) {
-        // done( err, user, infor );    from above
 
         if ( err ) {
             return next( err );
@@ -182,6 +190,8 @@ server.post( '/validate', function ( req, res, next ) {
  */
 server.post( '/logout', function ( req, res, next ) {
     if ( req.isAuthenticated ) {
+        req.logout();
+
         var info = {
             status: 1,
             data: view.loginView().body,    // send the login activity back
@@ -199,11 +209,14 @@ server.post( '/logout', function ( req, res, next ) {
 } );
 
 
+
 /**
  * Serving requests
  */
 server.use( '/login', loginRouter );
 server.use( '/user', usersRouter );
+server.use( '/modify', modifyRouter );
+server.use( '/google', googleRouter );
 server.use( '/error', function ( req, res ) {
     res.send( '404 Not found!' );
 } );

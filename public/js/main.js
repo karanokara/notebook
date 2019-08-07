@@ -238,12 +238,29 @@ var app = {
             localSubmit.attr( 'disabled', '' );
             googleSubmit.attr( 'disabled', '' );
 
-            var name = username.val(),
-                pass = password.val(),
-                data = {
-                    username: name,
-                    password: pass,
-                };
+            _this.sendData( '/google', null, null,
+                // success
+                function ( data ) {
+                    // change activity
+                    // _this.appWrapper.append( data.data );
+                    // _this.init();
+                    // activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
+                },
+                // fail
+                function () {
+
+                },
+                // complete
+                function () {
+                    // others to do after complete
+
+                    username.attr( 'disabled', null );
+                    password.attr( 'disabled', null );
+                    localSubmit.attr( 'disabled', null );
+                    googleSubmit.attr( 'disabled', null );
+
+                }
+            );
 
 
 
