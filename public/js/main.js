@@ -1,3 +1,5 @@
+var anime = TweenMax,
+    ease2 = Power2;
 
 var app = {
     backLid: null,
@@ -15,14 +17,14 @@ var app = {
          */
         dom: null,
         isShowed: 0,
-        scheduleToHide: 0,
+        scheduleToHide: null,
         show: function ( msg ) {
             var _this = this;
 
             _this.dom.find( '.message-content' ).text( msg );
             _this.isShowed = 1;
-            TweenMax.to( _this.dom, .3, {
-                y: '0%', ease: Power2.easeOut, onComplete: function () {
+            anime.to( _this.dom, .3, {
+                y: '0%', ease: ease2.easeOut, onComplete: function () {
                     _this.hide( 5 );
                 }
             } );
@@ -40,10 +42,10 @@ var app = {
                 _this.scheduleToHide.kill();
             }
 
-            _this.scheduleToHide = TweenMax.to( _this.dom, .3, {
-                y: '100%', ease: Power2.easeOut, delay: delay, onComplete: function () {
+            _this.scheduleToHide = anime.to( _this.dom, .3, {
+                y: '100%', ease: ease2.easeOut, delay: delay, onComplete: function () {
                     _this.isShowed = 0;
-                    _this.scheduleToHide = 0;
+                    _this.scheduleToHide = null;
                 }
             } );
         },
@@ -162,18 +164,26 @@ var app = {
         this.trimNote();
         this.sizeNoteEditView();
     },
-
+    /**
+     * handle login activity stuffs
+     */
     login: function () {
         var _this = this,
             form = $( '#login-form' ),
             username = form.find( '#input-username' ),
-            password = form.find( '#input-password' );
+            password = form.find( '#input-password' ),
+            localSubmit = form.find( '#local-login-btn' ),
+            googleSubmit = form.find( '#google-login-btn' );
 
         this.messageBar.dom = $( '#message-bar' );
         this.messageBar.isShowed = 0;
 
         form.on( 'submit', function ( evt ) {
             evt.preventDefault();
+            username.attr( 'disabled', '' );
+            password.attr( 'disabled', '' );
+            localSubmit.attr( 'disabled', '' );
+            googleSubmit.attr( 'disabled', '' );
 
             var name = username.val(),
                 pass = password.val(),
@@ -184,21 +194,47 @@ var app = {
 
 
             _this.sendData( '/validate', data, null,
+                // success
                 function ( data ) {
                     // change activity
+                    _this.appWrapper.append( data.data );
+                    _this.init();
+                    activityManager.openActivity( 'user', '#user-activity', null );
+                },
+                // fail
+                function () {
+                    username.attr( 'disabled', null );
+                    password.attr( 'disabled', null );
+                    localSubmit.attr( 'disabled', null );
+                    googleSubmit.attr( 'disabled', null );
 
-
-
-                    //activityManager.openActivity();
-                }, function () {
+                },
+                // complete
+                function () {
                     // others to do after complete
+
+
                 }
             );
 
 
-        } )
-    },
+        } );
 
+        googleSubmit.on( 'click', function () {
+            username.attr( 'disabled', '' );
+            password.attr( 'disabled', '' );
+            localSubmit.attr( 'disabled', '' );
+            googleSubmit.attr( 'disabled', '' );
+
+
+
+
+        } );
+
+    },
+    logout: function () {
+
+    },
 
     addNote: function ( title, content ) {
 
@@ -242,7 +278,7 @@ var app = {
             total = app.editView.height();
 
         this.editView.find( '#note-edit-content' ).css( {
-            'height': total - sum - 5
+            'height': total - sum - 50
         } );
 
     },
@@ -263,7 +299,7 @@ var app = {
      * @param {*} success 
      * @param {*} complete 
      */
-    sendData: function ( target, data, start, success, complete ) {
+    sendData: function ( target, data, start, success, fail, complete ) {
         var _this = this,
             url = location.origin + target;
 
@@ -298,6 +334,9 @@ var app = {
                 _this.messageBar.show( xhr.responseJSON.msg )
                 //alert( 'error' );
                 //app.ajaxResponse = xhr;
+
+                if ( fail )
+                    fail();
             }
         } );
     }
@@ -356,6 +395,10 @@ var activityManager = {
         this.currentActivity.activity = app.appWrapper.attr( 'data-activity' )
         this.currentActivity.dom = $( '#' + this.currentActivity.activity + '-activity' );
         this.activityCount += 1;
+        this.currentActivity.dom.addClass( 'current' );
+        this.currentActivity.dom.removeClass( 'fixed-top' );
+
+
         if ( this.currentActivity.activity === 'user' ) {
             app.init();
         }
@@ -445,22 +488,28 @@ var activityManager = {
             'zIndex': Number( newActivity.dom.css( 'zIndex' ) ) + ( _this.activityCount++ ),
         } );
 
-        TweenMax.to( newActivity.dom, .3, {
-            y: '0%', ease: Power2.easeOut,
+        anime.to( newActivity.dom, .3, {
+            y: '0%', ease: ease2.easeOut,
             onStart: function () {
                 app.htmlBody.css( { 'overflow': 'hidden' } );
             }, onComplete: function () {
+                _this.currentActivity.dom.addClass( 'current' );
+                _this.currentActivity.dom.removeClass( 'fixed-top' );
+
                 if ( newActivity.activity === 'user' )
                     app.htmlBody.css( { 'overflow': '' } );
-            }
+            },
+            clearProps: 'visibility,transform'
         } );
-        TweenMax.to( newActivity.prevActivity.dom, .3, {
-            y: '2%', scale: .92, ease: Power2.easeOut, onComplete: function () {
+        anime.to( newActivity.prevActivity.dom, .3, {
+            y: '2%', scale: .92, ease: ease2.easeOut, onComplete: function () {
+
+                _this.currentActivity.prevActivity.dom.addClass( 'fixed-top' );
+                _this.currentActivity.prevActivity.dom.removeClass( 'current' );
 
             }
         } );
 
-        //    transform: translate(0%,2%) scale(.92);
         if ( this.hasOwnProperty( activity + 'Activity' ) )
             this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
     },
@@ -471,28 +520,33 @@ var activityManager = {
         if ( this.currentActivity.prevActivity ) {
             var current = _this.currentActivity;
 
-            TweenMax.to( current.dom, .3, {
-                y: '100%', ease: Power2.easeOut,
+            anime.to( current.dom, .3, {
+                y: '100%', ease: ease2.easeOut,
                 onStart: function () {
                     app.htmlBody.css( { 'overflow': 'hidden' } );
+
+                    _this.currentActivity.dom.addClass( 'fixed-top' );
                 }, onComplete: function () {
 
-                }, clearProps: 'all'
+                    _this.currentActivity.dom.removeClass( 'current' );
+                },
+                clearProps: 'all'
             } );
-            TweenMax.to( current.prevActivity.dom, .3, {
-                y: '0%', scale: 1, ease: Power2.easeOut, onComplete: function () {
+            anime.to( current.prevActivity.dom, .3, {
+                y: '0%', scale: 1, ease: ease2.easeOut,
+                onStart: function () {
+                    _this.currentActivity.prevActivity.dom.addClass( 'current' );
+
+                }, onComplete: function () {
                     if ( current.prevActivity.activity === 'user' ) {
                         app.htmlBody.css( { 'overflow': '' } );
-                        current.prevActivity.dom.css( { 'transform': '' } );
                     }
-
-                    _this.currentActivity.dom.css( {
-                        'visibility': '',
-                    } );
+                    _this.currentActivity.prevActivity.dom.removeClass( 'fixed-top' );
 
                     --_this.activityCount;
                     _this.currentActivity = _this.currentActivity.prevActivity;
-                }
+                },
+                clearProps: 'visibility,transform'
             } );
 
         }
@@ -512,6 +566,9 @@ var activityManager = {
         }
 
     },
+    hasPrevActivity: function () {
+        return ( this.currentActivity.prevActivity ) ? true : false;
+    }
 };
 
 

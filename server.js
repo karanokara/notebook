@@ -8,6 +8,7 @@ var usersRouter = require( './routes/users' );
 var server = express();
 var database = require( './database' );
 var tool = require( './tool' );
+var view = require( './routes/view' );
 var passport = require( 'passport' );
 var strategyLocal = require( 'passport-local' ).Strategy;
 //var strategyGoogle = require( 'p' );
@@ -103,7 +104,7 @@ passport.use( new strategyLocal(
         var info = database.userLogin( username, password );
 
         if ( info.status ) {
-            info.data = tool.render( 'user', info.data );
+            info.data = view.userView( info.data ).body;
 
             // user is just username
             // so session is storing username

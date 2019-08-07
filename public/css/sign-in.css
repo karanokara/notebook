@@ -52,8 +52,10 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition-property:  background;
+  transition-property:  background;
+  -webkit-transition-duration: .4s;
+  transition-duration: .4s;
 }
 
 .slider:before {
@@ -63,9 +65,11 @@
 	width: 26px;
 	left: -4px;
 	bottom: 4px;
-	background-color: #efefef;
-	-webkit-transition: .4s;
-	transition: .4s;
+  background-color: #efefef;
+  -webkit-transition-property: transform, background;
+  transition-property: transform, background;
+  -webkit-transition-duration: .4s;
+  transition-duration: .4s;
 	box-shadow: 0 1px 3px 1px #9a9a9a;
 }
 
