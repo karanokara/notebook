@@ -1,6 +1,5 @@
 var anime = TweenMax,
-    ease2 = Power2,
-    ease1 =;
+    ease2 = Power2;
 
 var app = {
     backLid: null,
@@ -107,14 +106,12 @@ var app = {
 
         $( '.setting-item[data-type="sign-out"]' ).on( 'click', function () {
             app.logout();
-
         } );
 
         /* ---------------- add note menu ----------------------- */
 
         $( '.setting-item[data-type="note-new"]' ).on( 'click', function () {
             activityManager.openActivity( 'new', '#note-edit-activity' );
-
         } );
 
 
@@ -122,13 +119,11 @@ var app = {
 
         $( '.setting-item[data-type="note-edit"]' ).on( 'click', function () {
             var thisNote = menuManager.associateItem;
-
             activityManager.openActivity( 'edit', '#note-edit-activity', thisNote );
         } );
 
         $( '.setting-item[data-type="note-delete"]' ).on( 'click', function () {
-
-
+            app.deleteNote( menuManager.associateItem );
         } );
 
 
@@ -401,9 +396,27 @@ var app = {
         }
     },
     deleteNote: function ( noteDom ) {
+        if ( !confirm( 'Are you sure to delete this note?' ) )
+            return;
 
-        noteDom.remove();
+        menuManager.closeMenu();
 
+        var _this = this,
+            id = noteDom.attr( 'note-id' );
+        this.sendData( '/modify/delete', { id: id }, null,
+            function ( info ) {
+                if ( activityManager.currentActivity.activity == 'view' ) {
+                    activityManager.clearActivity();
+                    activityManager.closeActivity();
+                }
+
+                noteDom.remove();
+
+                _this.messageBar.show( 'Successfully deleted a note.' );
+            }, function ( info ) {
+                // fail
+
+            }, null );
         // update server side
     },
 
@@ -515,53 +528,53 @@ var app = {
 var menuManager = {
     openedMenu: null,
     associateItem: null,
-};
 
-menuManager.openMenu = function ( menuId, title, item ) {
-    var menu = $( menuId );
 
-    if ( title )
-        menu.find( '.menu-title' ).text( title );
+    openMenu: function ( menuId, title, item ) {
+        var menu = $( menuId );
 
-    app.menuWrapper.css( {
-        'visibility': 'visible'
-    } );
+        if ( title )
+            menu.find( '.menu-title' ).text( title );
 
-    menu.css( {
-        'visibility': 'visible'
-    } );
-    this.openedMenu = menu;
-
-    anime.to( app.backLid, .2, { opacity: '1', ease: ease2.easeOut } );
-    anime.to( menu, .2, { y: '0%', opacity: '1', ease: ease2.easeOut } );
-
-    // associate opened menu with item selected
-    if ( item )
-        this.associateItem = item;
-};
-
-menuManager.closeMenu = function () {
-    var _this = this;
-    if ( _this.openedMenu ) {
-
-        anime.to( app.backLid, .2, { opacity: '0', ease: ease2.easeOut, clearProps: 'all' } );
-        anime.to( this.openedMenu, .2, {
-            y: '50%', opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
-                _this.openedMenu.css( {
-                    'visibility': ''
-                } );
-
-                app.menuWrapper.css( {
-                    'visibility': ''
-                } );
-                _this.openedMenu = null;
-            }
+        app.menuWrapper.css( {
+            'visibility': 'visible'
         } );
 
+        menu.css( {
+            'visibility': 'visible'
+        } );
+        this.openedMenu = menu;
 
-    }
+        anime.to( app.backLid, .2, { opacity: '1', ease: ease2.easeOut } );
+        anime.to( menu, .2, { y: '0%', opacity: '1', ease: ease2.easeOut } );
+
+        // associate opened menu with item selected
+        if ( item )
+            this.associateItem = item;
+    },
+
+    closeMenu: function () {
+        var _this = this;
+        if ( _this.openedMenu ) {
+
+            anime.to( app.backLid, .2, { opacity: '0', ease: ease2.easeOut, clearProps: 'all' } );
+            anime.to( this.openedMenu, .2, {
+                y: '50%', opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
+                    _this.openedMenu.css( {
+                        'visibility': ''
+                    } );
+
+                    app.menuWrapper.css( {
+                        'visibility': ''
+                    } );
+                    _this.openedMenu = null;
+                }
+            } );
+
+
+        }
+    },
 };
-
 
 var activityManager = {
     currentActivity: {

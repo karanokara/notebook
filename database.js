@@ -90,7 +90,7 @@ database.deleteNote = function ( username, noteId ) {
     var list = this.get( username ).list;
 
     for ( var i = 0; i < list.length; ++i ) {
-        if ( noteId == list[i]["noteId"] ) {
+        if ( Number( noteId ) == list[i]["noteId"] ) {
             list.splice( i, 1 );
             this.update();
             return {
