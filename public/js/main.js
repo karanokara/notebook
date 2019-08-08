@@ -82,6 +82,10 @@ var app = {
             menuManager.openMenu( '#note-add-setting' );
         } );
 
+        $( '#order-btn' ).on( 'click', function () {
+            menuManager.openMenu( '#note-order-setting' );
+        } );
+
         // using bubbling, calling children first
         $( '.note-setting-btn' ).each( function () {
             this.addEventListener( 'click', function ( event ) {
@@ -418,6 +422,12 @@ var app = {
 
             }, null );
         // update server side
+    },
+    changeUserDisplayName: function () {
+
+    },
+    changeUserPassword: function () {
+
     },
 
     trimNote: function ( note ) {

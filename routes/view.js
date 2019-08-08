@@ -80,11 +80,44 @@ view.noteSettingView = function () {
 
             },
             {
-                itemName: 'View Details',
-                itemIcon: tool.readFile( 'public/images/detail.svg' ),
-                settingStr: 'note-detail'
+                itemName: 'Change color',
+                itemIcon: tool.readFile( 'public/images/palette.svg' ),
+                settingStr: 'note-color'
 
             }
+        ]
+    };
+};
+
+view.noteOrderSettingView = function () {
+    return {
+        title: "Order",
+        listingClasses: 'flex-column',
+        settingId: 'note-order-setting',
+        items: [
+            {
+                itemName: 'Title',
+                itemIcon: tool.readFile( 'public/images/arrow-up.svg' ),
+                settingStr: 'note-order-title-up'
+            },
+            {
+                itemName: 'Title',
+                itemIcon: tool.readFile( 'public/images/arrow-down.svg' ),
+                settingStr: 'note-order-title-down'
+
+            },
+            {
+                itemName: 'Last update',
+                itemIcon: tool.readFile( 'public/images/arrow-up.svg' ),
+                settingStr: 'note-order-date-up'
+
+            },
+            {
+                itemName: 'Last update',
+                itemIcon: tool.readFile( 'public/images/arrow-down.svg' ),
+                settingStr: 'note-order-date-down'
+
+            },
         ]
     };
 };
@@ -126,10 +159,13 @@ view.userView = function ( userData ) {
 
     };
 
+    // bottom menu
     userView.menus.push( tool.render( 'app-bottom-menu', view.appSettingView( userView.username ) ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteSettingView() ) );
+    userView.menus.push( tool.render( 'app-bottom-menu', view.noteOrderSettingView() ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteAddView() ) );
 
+    // activity
     userView.noteEdit = tool.render( 'note-edit', view.noteEditView() );
     userView.noteView = tool.render( 'note-view', view.noteEditView() );
 

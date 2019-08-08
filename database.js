@@ -167,6 +167,44 @@ database.addNote = function ( username, noteTitle, noteContent ) {
 };
 
 /**
+ * change the user display name
+ */
+database.changeDisplayName = function ( username, name ) {
+    var data = this.get( username );
+
+    if ( !data )
+        return {
+            status: 0,
+            msg: 'User is not found.'
+        };
+
+    data.name = name;
+    this.update();
+    return {
+        status: 1
+    };
+};
+
+/**
+ * change the user password
+ */
+database.changePassword = function ( username, password ) {
+    var data = this.get( username );
+
+    if ( !data )
+        return {
+            status: 0,
+            msg: 'User is not found.'
+        };
+
+    data.password = password;
+    this.update();
+    return {
+        status: 1
+    };
+};
+
+/**
  * write data to data file
  */
 database.update = function () {

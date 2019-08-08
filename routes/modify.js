@@ -79,8 +79,45 @@ router.post( '/delete', function ( req, res, next ) {
 } );
 
 
+router.post( '/displayName', function ( req, res, next ) {
 
+    var username = req.session.passport.user,
+        name = req.body.name;
 
+    if ( !name )
+        return res.status( 404 ).send( 'No data received.' );
+
+    var info = database.changeDisplayName( username, name );
+
+    // console.log( req.body );
+
+    if ( info.status ) {
+        res.send( JSON.stringify( info ) );
+    }
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
+} );
+
+router.post( '/password', function ( req, res, next ) {
+
+    var username = req.session.passport.user,
+        password = req.body.password;
+
+    if ( !password )
+        return res.status( 404 ).send( 'No data received.' );
+
+    var info = database.changePassword( username, password );
+
+    // console.log( req.body );
+
+    if ( info.status ) {
+        res.send( JSON.stringify( info ) );
+    }
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
+} );
 
 
 
