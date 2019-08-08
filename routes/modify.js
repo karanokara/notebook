@@ -30,8 +30,9 @@ router.post( '/add', function ( req, res, next ) {
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
     }
-
-    res.status( 401 ).send( info.msg );
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
 } );
 
 
@@ -52,8 +53,9 @@ router.post( '/edit', function ( req, res, next ) {
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
     }
-
-    res.status( 401 ).send( info.msg );
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
 } );
 
 router.post( '/delete', function ( req, res, next ) {
@@ -71,8 +73,9 @@ router.post( '/delete', function ( req, res, next ) {
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
     }
-
-    res.status( 401 ).send( info.msg );
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
 } );
 
 

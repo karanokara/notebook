@@ -1,5 +1,6 @@
 var anime = TweenMax,
-    ease2 = Power2;
+    ease2 = Power2,
+    ease1 =;
 
 var app = {
     backLid: null,
@@ -334,7 +335,7 @@ var app = {
             '<div id="note' + id + '" class="note my-3 p-3 bg-white rounded shadow-sm" note-id="' + id + '">' +
             '<h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">' +
             '<div class="note-title-tag" >' +
-            '<img class="" src="/files/images/file.svg" alt="" width="22" height="22">' +
+            '<img class="" src="/files/images/file.svg" alt="" width="22" height="22"> ' +
             '<span class="note-title">' + title + '</span>' +
             '</div>' +
             '<button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="' + id + '">' +
@@ -351,12 +352,12 @@ var app = {
         this.noteList.append( str );
         var note = $( '#note' + id );
         this.trimNote( note );
-        note.find( '.note-setting-btn' )[ 0 ].addEventListener( 'click', function ( event ) {
+        note.find( '.note-setting-btn' )[0].addEventListener( 'click', function ( event ) {
             menuManager.openMenu( '#note-setting', title, note );
             event.stopPropagation();
         } );
 
-        note[ 0 ].addEventListener( 'click', function () {
+        note[0].addEventListener( 'click', function () {
             app.currentFocusNote = this.getAttribute( 'note-id' );
             activityManager.openActivity( 'view', '#note-view-activity', $( this ) );
         } );
@@ -373,8 +374,9 @@ var app = {
             content: content,
         }, null, function ( info ) {
             activityManager.clearActivity();
-            activityManager.closeActivity();
-            _this.reviseNote( id, title, content, info.date );
+            activityManager.closeActivity().promise.then( function () {
+                _this.reviseNote( id, title, content, info.date );
+            } );
             _this.messageBar.show( 'Successfully edit a note.' );
         }, function ( info ) {
             // enable submit btn
@@ -388,8 +390,15 @@ var app = {
 
         note.find( '.note-title' ).text( title );
         note.find( '.note-content' ).text( content );
+        note.find( '.note-content-show' ).text( content );
         note.find( '.note-date' ).text( date );
         this.trimNote( note );
+
+        if ( activityManager.currentActivity.activity == 'view' ) {
+            activityManager.currentActivity.viewTitle.text( title );
+            activityManager.currentActivity.viewDate.text( date );
+            activityManager.currentActivity.viewContent.text( content );
+        }
     },
     deleteNote: function ( noteDom ) {
 
@@ -477,7 +486,11 @@ var app = {
                 console.log( error );
                 console.log( status );
                 console.log( xhr );
-                _this.messageBar.show( xhr.responseJSON.msg )
+                if ( xhr.responseJSON )
+                    _this.messageBar.show( xhr.responseJSON.msg );
+                else
+                    _this.messageBar.show( xhr.responseText );
+
                 //alert( 'error' );
                 //app.ajaxResponse = xhr;
 
@@ -485,6 +498,17 @@ var app = {
                     fail();
             }
         } );
+    },
+    deferred: function () {
+        return new function () {
+            this.resolve = null;
+            this.reject = null;
+
+            this.promise = new Promise( function ( resolve, reject ) {
+                this.resolve = resolve;
+                this.reject = reject;
+            }.bind( this ) );
+        };
     }
 };
 
@@ -580,7 +604,7 @@ var activityManager = {
             man.currentActivity.content.val( content );
         }
 
-        man.currentActivity.activityTitle.text( activity[ 0 ].toUpperCase() + activity.substr( 1 ) );
+        man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
 
         // a note must have title
         man.currentActivity.title.off( 'keyup' ).on( 'keyup', function () {
@@ -616,20 +640,21 @@ var activityManager = {
     },
     // filling info into single note view
     viewActivity: function ( activity, activityDom, dom ) {
-        var viewTitle = activityDom.find( '#note-view-title' ),
-            viewDate = activityDom.find( '#note-view-date' ),
-            viewContent = activityDom.find( '#note-view-content' ),
-            viewSettingBtn = activityDom.find( '.note-setting-btn' ),
-            id = dom.attr( 'note-id' ),
+        this.currentActivity.viewTitle = activityDom.find( '#note-view-title' );
+        this.currentActivity.viewDate = activityDom.find( '#note-view-date' );
+        this.currentActivity.viewContent = activityDom.find( '#note-view-content' );
+        this.currentActivity.viewSettingBtn = activityDom.find( '.note-setting-btn' );
+
+        var id = dom.attr( 'note-id' ),
             title = dom.find( '.note-title' ).text(),
             date = dom.find( '.note-date' ).text(),
             content = dom.find( '.note-content' ).text();
 
 
-        viewTitle.text( title );
-        viewDate.text( date );
-        viewContent.text( content );
-        viewSettingBtn.attr( 'note-id', id );
+        this.currentActivity.viewTitle.text( title );
+        this.currentActivity.viewDate.text( date );
+        this.currentActivity.viewContent.text( content );
+        this.currentActivity.viewSettingBtn.attr( 'note-id', id );
     },
 
     // associateItemDom is the related html dom 
@@ -674,13 +699,14 @@ var activityManager = {
         } );
 
         if ( this.hasOwnProperty( activity + 'Activity' ) )
-            this[ activity + 'Activity' ]( activity, newActivity.dom, associateItemDom );
+            this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
 
         menuManager.closeMenu();
     },
 
-    closeActivity: function ( callback ) {
-        var _this = this;
+    closeActivity: function () {
+        var _this = this,
+            defer = app.deferred();
         // ensure there is a activity to bring back
         if ( this.currentActivity.prevActivity ) {
             var current = _this.currentActivity;
@@ -711,8 +737,7 @@ var activityManager = {
                     --_this.activityCount;
                     _this.currentActivity = _this.currentActivity.prevActivity;
 
-                    if ( callback )
-                        callback();
+                    defer.resolve();
                 },
                 clearProps: 'visibility,transform'
             } );
@@ -720,6 +745,7 @@ var activityManager = {
         }
 
         menuManager.closeMenu();
+        return defer;
     },
 
     /**

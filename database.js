@@ -18,12 +18,12 @@ database.userLogin = function ( username, givenPassword, isUsingPassword ) {
         isUsingPassword = 1;
 
     if ( obj ) {
-        if ( !isUsingPassword || obj[ 'password' ] === givenPassword ) {
-            var last = obj[ 'currentLogin' ];
+        if ( !isUsingPassword || obj['password'] === givenPassword ) {
+            var last = obj['currentLogin'];
 
-            obj[ 'lastLogin' ] = last;
-            obj[ 'lastLoginString' ] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
-            obj[ 'currentLogin' ] = moment().valueOf();
+            obj['lastLogin'] = last;
+            obj['lastLoginString'] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
+            obj['currentLogin'] = moment().valueOf();
             this.update();
 
             return {
@@ -50,8 +50,8 @@ database.userLogin = function ( username, givenPassword, isUsingPassword ) {
 database.get = function ( username ) {
 
     for ( var i = 0; i < this.size; ++i ) {
-        var obj = this.data[ i ];
-        if ( obj[ 'username' ] === username ) {
+        var obj = this.data[i];
+        if ( obj['username'] === username ) {
             return obj;
         }
     }
@@ -90,7 +90,7 @@ database.deleteNote = function ( username, noteId ) {
     var list = this.get( username ).list;
 
     for ( var i = 0; i < list.length; ++i ) {
-        if ( noteId == list[ i ][ "noteId" ] ) {
+        if ( noteId == list[i]["noteId"] ) {
             list.splice( i, 1 );
             this.update();
             return {
@@ -113,9 +113,10 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
         note = null,
         found = 0;
 
-    for ( var i = 0; i < list.size && !found; ++i ) {
-        note = list[ i ];
-        if ( note[ 'noteId' ] == noteId ) {
+    for ( var i = 0; i < list.length && !found; ++i ) {
+        note = list[i];
+
+        if ( note['noteId'] == Number( noteId ) ) {
             found = 1;
         }
     }
@@ -126,10 +127,10 @@ database.editNote = function ( username, noteId, notetitle, noteContent ) {
             msg: 'Note ' + notetitle + ' is not found.'
         };
 
-    note[ 'title' ] = notetitle;
-    note[ 'note' ] = noteContent;
+    note['title'] = notetitle;
+    note['note'] = noteContent;
     var date = moment().format( 'YYYY/MM/DD - HH:mm' );
-    note[ 'lastUpdate' ] = date;
+    note['lastUpdate'] = date;
 
     this.update();
     return {
@@ -155,7 +156,7 @@ database.addNote = function ( username, noteTitle, noteContent ) {
         };
 
     obj.noteCount = noteId;
-    obj[ 'list' ].push( note );
+    obj['list'].push( note );
     this.update();
 
     return {
