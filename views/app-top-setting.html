@@ -1,0 +1,19 @@
+<div id="{{settingId}}" class="app-top-setting p-4 position-absolute bg-white shadow-sm rounded">
+    <div class="mb-4 text-center font-weight-bold text-secondary menu-title">
+        {{title}}
+    </div>
+    <div class="d-flex{{listingClasses}}">
+        {{#items}}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">{{itemName}}</span>
+            </div>
+            <input data-type="{{settingStr}}" type="{{type}}" class="form-control" value="">
+        </div>
+        {{/items}}
+        <div class="text-right">
+            <button type="button" class="btn btn-outline-secondary cancel-btn mr-3">Cancel</button>
+            <button type="button" class="btn btn-outline-success submit-btn">Done</button>
+        </div>
+    </div>
+</div>

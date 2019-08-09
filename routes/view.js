@@ -122,6 +122,54 @@ view.noteOrderSettingView = function () {
     };
 };
 
+// app top setting drop down 
+view.userDisplayNameChangeView = function () {
+    return {
+        title: 'Change display name',
+        settingId: 'user-display-name-change',
+        listingClasses: 'flex-column',
+        items: [
+            {
+                itemName: 'Name',
+                settingStr: 'user-display-name',
+                type: 'text'
+            }
+        ],
+        btns: [
+            {
+                name: 'Cancel'
+            },
+            {
+                name: 'Change'
+            }
+        ]
+    };
+};
+
+// app top setting drop down 
+view.userPasswordChangeView = function () {
+    return {
+        title: 'Change password',
+        settingId: 'user-password-change',
+        listingClasses: 'flex-column',
+        items: [
+            {
+                itemName: 'Password',
+                settingStr: 'user-password',
+                type: 'password',
+            }
+        ],
+        btns: [
+            {
+                name: 'Cancel'
+            },
+            {
+                name: 'Change'
+            }
+        ]
+    };
+};
+
 view.noteAddView = function () {
     return {
         title: "New",
@@ -151,6 +199,7 @@ view.userView = function ( userData ) {
         bodyClasses: 'user',
         username: userData.username,
         menus: [],
+        settings: [],
         userSettingBtnImage: '/files/images/user-setting.svg',
         noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
         noteAddBtnImage: tool.readFile( 'public/images/add.svg' ),
@@ -164,6 +213,10 @@ view.userView = function ( userData ) {
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteSettingView() ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteOrderSettingView() ) );
     userView.menus.push( tool.render( 'app-bottom-menu', view.noteAddView() ) );
+
+    // top settings
+    userView.settings.push( tool.render( 'app-top-setting', view.userDisplayNameChangeView() ) );
+    userView.settings.push( tool.render( 'app-top-setting', view.userPasswordChangeView() ) );
 
     // activity
     userView.noteEdit = tool.render( 'note-edit', view.noteEditView() );

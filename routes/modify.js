@@ -25,7 +25,7 @@ router.post( '/add', function ( req, res, next ) {
 
     var info = database.addNote( username, title, content );
 
-    // console.log( req.body );
+    console.log( req.body );
 
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
@@ -48,7 +48,7 @@ router.post( '/edit', function ( req, res, next ) {
 
     var info = database.editNote( username, id, title, content );
 
-    // console.log( req.body );
+    console.log( req.body );
 
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
@@ -68,7 +68,7 @@ router.post( '/delete', function ( req, res, next ) {
 
     var info = database.deleteNote( username, id );
 
-    // console.log( req.body );
+    console.log( req.body );
 
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
@@ -89,7 +89,7 @@ router.post( '/displayName', function ( req, res, next ) {
 
     var info = database.changeDisplayName( username, name );
 
-    // console.log( req.body );
+    console.log( req.body );
 
     if ( info.status ) {
         res.send( JSON.stringify( info ) );
@@ -109,7 +109,7 @@ router.post( '/password', function ( req, res, next ) {
 
     var info = database.changePassword( username, password );
 
-    // console.log( req.body );
+    console.log( req.body );
 
     if ( info.status ) {
         res.send( JSON.stringify( info ) );

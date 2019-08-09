@@ -57,7 +57,9 @@ var app = {
                 this.dom = $( '#message-bar' );
         }
     },
-
+    /**
+     * Add user interactive behaviors
+     */
     init: function () {
         if ( this.isInit )
             return;
@@ -100,12 +102,18 @@ var app = {
         } );
 
         /* ---------------- app setting menu ----------------------- */
-        $( '.setting-item[data-type="username"]' ).on( 'click', function () {
-
+        $( '.setting-item[data-type="display-name"]' ).on( 'click', function () {
+            var defer = menuManager.openSetting( '#user-display-name-change' );
+            defer.promise.then( function () {
+                app.changeUserDisplayName();
+            } );
         } );
 
         $( '.setting-item[data-type="password"]' ).on( 'click', function () {
-
+            var defer = menuManager.openSetting( '#user-password-change' );
+            defer.promise.then( function () {
+                app.changeUserPassword();
+            } );
         } );
 
         $( '.setting-item[data-type="sign-out"]' ).on( 'click', function () {
@@ -132,7 +140,7 @@ var app = {
 
 
         $( '.setting-item[data-type="note-detail"]' ).on( 'click', function () {
-
+            // 
         } );
 
         /* ---------------- open view note activity ------------------- */
@@ -171,8 +179,13 @@ var app = {
 
         this.backLid.on( 'click', function () {
             menuManager.closeMenu();
+            menuManager.closeSetting();
         } );
 
+        $( '.app-top-setting .cancel-btn' ).on( 'click', function () {
+            menuManager.closeMenu();
+            menuManager.closeSetting();
+        } );
 
         this.changeNoteOrder();
         this.trimNote();
@@ -407,6 +420,8 @@ var app = {
 
         var _this = this,
             id = noteDom.attr( 'note-id' );
+
+        // update server side
         this.sendData( '/modify/delete', { id: id }, null,
             function ( info ) {
                 if ( activityManager.currentActivity.activity == 'view' ) {
@@ -417,17 +432,46 @@ var app = {
                 noteDom.remove();
 
                 _this.messageBar.show( 'Successfully deleted a note.' );
-            }, function ( info ) {
-                // fail
-
-            }, null );
-        // update server side
+            }, null, null );
     },
     changeUserDisplayName: function () {
+        var setting = menuManager.openedSetting,
+            input = setting.find( 'input[data-type="user-display-name"]' );
 
+        input.focus();
+        setting.find( '.submit-btn' ).off( 'click' ).on( 'click', function () {
+            var name = input.val();
+            if ( name === '' ) {
+                alert( 'Please enter a name.' );
+            }
+            else {
+                app.sendData( '/modify/displayName', { name: name }, null,
+                    function ( info ) {
+                        $( '#display-name' ).text( '@' + name );
+                        app.messageBar.show( 'Successfully change the display name.' );
+                        menuManager.closeSetting();
+                    }, null, null );
+            }
+        } );
     },
     changeUserPassword: function () {
+        var setting = menuManager.openedSetting,
+            input = setting.find( 'input[data-type="user-password"]' );
 
+        input.focus();
+        setting.find( '.submit-btn' ).off( 'click' ).on( 'click', function () {
+            var password = input.val();
+            if ( password === '' ) {
+                alert( 'Please enter a password.' );
+            }
+            else {
+                app.sendData( '/modify/password', { password: password }, null,
+                    function ( info ) {
+                        app.messageBar.show( 'Successfully change the password.' );
+                        menuManager.closeSetting();
+                    }, null, null );
+            }
+        } );
     },
 
     trimNote: function ( note ) {
@@ -538,24 +582,21 @@ var app = {
 var menuManager = {
     openedMenu: null,
     associateItem: null,
-
-
+    openedSetting: null,
+    isbackLidOpened: false,
     openMenu: function ( menuId, title, item ) {
         var menu = $( menuId );
 
         if ( title )
             menu.find( '.menu-title' ).text( title );
 
-        app.menuWrapper.css( {
-            'visibility': 'visible'
-        } );
+        this.openBacklid();
 
         menu.css( {
             'visibility': 'visible'
         } );
         this.openedMenu = menu;
 
-        anime.to( app.backLid, .2, { opacity: '1', ease: ease2.easeOut } );
         anime.to( menu, .2, { y: '0%', opacity: '1', ease: ease2.easeOut } );
 
         // associate opened menu with item selected
@@ -563,26 +604,78 @@ var menuManager = {
             this.associateItem = item;
     },
 
-    closeMenu: function () {
+    closeMenu: function ( notCloseBacklid ) {
         var _this = this;
         if ( _this.openedMenu ) {
 
-            anime.to( app.backLid, .2, { opacity: '0', ease: ease2.easeOut, clearProps: 'all' } );
-            anime.to( this.openedMenu, .2, {
+            if ( !notCloseBacklid )
+                _this.closeBacklid();
+
+            anime.to( _this.openedMenu, .2, {
                 y: '50%', opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
                     _this.openedMenu.css( {
                         'visibility': ''
                     } );
 
-                    app.menuWrapper.css( {
-                        'visibility': ''
-                    } );
                     _this.openedMenu = null;
                 }
             } );
-
-
         }
+    },
+
+    openSetting: function ( settingId ) {
+        var setting = $( settingId ),
+            defer = app.deferred();
+
+        this.closeMenu( 1 );
+
+        setting.css( {
+            'visibility': 'visible'
+        } );
+        this.openedSetting = setting;
+
+        anime.to( setting, .2, {
+            y: '0%', opacity: '1', ease: ease2.easeOut, onComplete: function () {
+                defer.resolve( setting );
+            }
+        } );
+
+        return defer;
+    },
+    closeSetting: function () {
+        var _this = this;
+        if ( _this.openedSetting ) {
+            _this.closeBacklid();
+
+            anime.to( _this.openedSetting, .2, {
+                y: '-50%', opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
+                    _this.openedSetting.find( 'input' ).val( '' );
+                    _this.openedSetting.css( {
+                        'visibility': ''
+                    } );
+                    _this.openedSetting = null;
+                }
+            } );
+        }
+    },
+    openBacklid: function () {
+        this.isbackLidOpened = true;
+        app.menuWrapper.css( {
+            'visibility': 'visible'
+        } );
+        anime.to( app.backLid, .2, { opacity: '1', ease: ease2.easeOut } );
+    },
+    closeBacklid: function () {
+        var _this = this;
+        anime.to( app.backLid, .2, {
+            opacity: '0', ease: ease2.easeOut, clearProps: 'all', onComplete: function () {
+                app.menuWrapper.css( {
+                    'visibility': ''
+                } );
+                _this.isbackLidOpened = false;
+
+            }
+        } );
     },
 };
 
