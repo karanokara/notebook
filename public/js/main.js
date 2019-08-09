@@ -11,6 +11,10 @@ var app = {
     appWrapper: $( '#app-wrapper' ),
     htmlBody: $( 'body' ),
     isInit: false,
+    currentNoteOrder: {
+        name: '',
+        direction: '',
+    },
     messageBar: {
         /**
          * the html DOM
@@ -102,6 +106,7 @@ var app = {
         } );
 
         /* ---------------- app setting menu ----------------------- */
+
         $( '.setting-item[data-type="display-name"]' ).on( 'click', function () {
             var defer = menuManager.openSetting( '#user-display-name-change' );
             defer.promise.then( function () {
@@ -119,6 +124,37 @@ var app = {
         $( '.setting-item[data-type="sign-out"]' ).on( 'click', function () {
             app.logout();
         } );
+
+        /* ---------------- note list order menu ----------------------- */
+
+        $( '.setting-item[data-type="note-order-title-up"]' ).on( 'click', function () {
+            if ( !( app.currentNoteOrder.name == 'title' && app.currentNoteOrder.direction == 'up' ) ) {
+                app.changeNoteOrder( 'Title', 'up' );
+                menuManager.closeMenu();
+            }
+        } );
+
+        $( '.setting-item[data-type="note-order-title-down"]' ).on( 'click', function () {
+            if ( !( app.currentNoteOrder.name == 'title' && app.currentNoteOrder.direction == 'down' ) ) {
+                app.changeNoteOrder( 'Title', 'down' );
+                menuManager.closeMenu();
+            }
+        } );
+
+        $( '.setting-item[data-type="note-order-date-up"]' ).on( 'click', function () {
+            if ( !( app.currentNoteOrder.name == 'date' && app.currentNoteOrder.direction == 'up' ) ) {
+                app.changeNoteOrder( 'date', 'up' );
+                menuManager.closeMenu();
+            }
+        } );
+
+        $( '.setting-item[data-type="note-order-date-down"]' ).on( 'click', function () {
+            if ( !( app.currentNoteOrder.name == 'date' && app.currentNoteOrder.direction == 'down' ) ) {
+                app.changeNoteOrder( 'date', 'down' );
+                menuManager.closeMenu();
+            }
+        } );
+
 
         /* ---------------- add note menu ----------------------- */
 
@@ -329,6 +365,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity();
             _this.makeNote( info.id, title, content, info.date );
+            _this.changeNoteOrder( _this.currentNoteOrder.name, _this.currentNoteOrder.direction );
             _this.messageBar.show( 'Successfully added a new note.' );
         }, function ( info ) {
             // enable submit btn
@@ -388,6 +425,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity().promise.then( function () {
                 _this.reviseNote( id, title, content, info.date );
+                _this.changeNoteOrder( _this.currentNoteOrder.name, _this.currentNoteOrder.direction );
             } );
             _this.messageBar.show( 'Successfully edit a note.' );
         }, function ( info ) {
@@ -507,11 +545,77 @@ var app = {
     /**
      * change note listing order
      */
-    changeNoteOrder: function () {
+    changeNoteOrder: function ( orderName, orderDirection ) {
+        var menu = $( '#note-order-setting' );
+
+        if ( !orderName || !orderDirection ) {
+            orderName = this.orderBtn.find( '.order-name' ).text().toLowerCase();
+            orderDirection = this.orderBtn.attr( 'order' );
+        }
+        else {
+            this.orderBtn.find( '.order-name' ).text( orderName );
+            this.orderBtn.attr( 'order', orderDirection );
+            orderName = orderName.toLowerCase();
+        }
+
+        this.currentNoteOrder.name = orderName;
+        this.currentNoteOrder.direction = orderDirection;
 
         this.orderBtn.find( '.order-img' ).css( 'display', 'none' );
-        this.orderBtn.find( '#order-img-' + this.orderBtn.attr( 'order' ) ).css( 'display', '' );
+        this.orderBtn.find( '#order-img-' + orderDirection ).css( 'display', '' );
+        menu.find( '.setting-item.current-choice' ).removeClass( 'current-choice' );
+        menu.find( '.setting-item[data-type="note-order-' + orderName + '-' + orderDirection + '"]' ).addClass( 'current-choice' );
 
+        // process sorting
+        this.sortingNote( orderName, orderDirection );
+    },
+    /**
+     * Sorting the note list by order name and order direction
+     * @param {string} orderName 
+     * @param {string} orderDirection 
+     */
+    sortingNote: function ( orderName, orderDirection ) {
+        var notes = this.noteList.find( '.note' ),
+            size = notes.length,
+            tempList = [],
+            compareValue;
+
+        if ( orderName == 'title' ) {
+            compareValue = function ( a, b ) {
+                // console.log( $( a ).find( '.note-title' ).text() );
+                // console.log( $( b ).find( '.note-title' ).text() );
+                return ( $( a ).find( '.note-title' ).text() > $( b ).find( '.note-title' ).text() ) ? 1 : -1;
+            };
+        }
+        else if ( orderName == 'date' ) {
+            compareValue = function ( a, b ) {
+                return ( moment( $( a ).find( '.note-date' ).text(), 'YYYY/MM/DD - HH:mm' ).valueOf() ) - ( moment( $( b ).find( '.note-date' ).text(), 'YYYY/MM/DD - HH:mm' ).valueOf() );
+            };
+        }
+        else {
+            console.log( 'No order name??' );
+        }
+
+        notes.each( function () {
+            tempList.push( this );
+        } );
+
+        tempList.sort( function ( a, b ) {
+            return compareValue( a, b )
+        } );
+
+        notes.remove();
+
+        if ( orderDirection == 'up' ) {
+            for ( var i = 0; i < notes.length; ++i ) {
+                this.noteList.append( tempList[i] );
+            }
+        }
+        else {
+            for ( var i = ( notes.length - 1 ); i >= 0; --i ) {
+                this.noteList.append( tempList[i] );
+            }
+        }
     },
     /**
      * 
@@ -907,7 +1011,6 @@ var activityManager = {
 
 $( document ).ready( function () {
     activityManager.init();
-
 } );
 
 

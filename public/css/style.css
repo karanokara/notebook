@@ -14,6 +14,8 @@ body{
 
 .icon-inside {
     font-size: 0;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .app-wrapper {
@@ -115,4 +117,10 @@ body{
     width: 100%;
     -webkit-transform: translate(0,100%);
     transform: translate(0,100%);
+}
+
+
+#note-order-setting .setting-item.current-choice {
+    border-radius: 50px 0 0 50px;
+    background-color: #c5dbe9;
 }

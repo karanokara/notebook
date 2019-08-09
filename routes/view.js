@@ -92,7 +92,7 @@ view.noteSettingView = function () {
 view.noteOrderSettingView = function () {
     return {
         title: "Order",
-        listingClasses: 'flex-column',
+        listingClasses: 'flex-column ml-2',
         settingId: 'note-order-setting',
         items: [
             {
