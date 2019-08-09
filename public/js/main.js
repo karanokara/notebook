@@ -565,6 +565,17 @@ var app = {
         else {
             this.orderBtn.find( '.order-name' ).text( orderName );
             this.orderBtn.attr( 'order', orderDirection );
+
+            // update to server
+            app.sendData( '/modify/note-order',
+                {
+                    "noteOrderName": orderName,
+                    "noteOrderDirection": orderDirection
+                }, null,
+                null, function ( info ) {
+                    app.messageBar.show( 'Fail to update current order choice to the server.' );
+                }, null );
+
             orderName = orderName.toLowerCase();
         }
 

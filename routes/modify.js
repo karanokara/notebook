@@ -119,6 +119,27 @@ router.post( '/password', function ( req, res, next ) {
     }
 } );
 
+router.post( '/note-order', function ( req, res, next ) {
+
+    var username = req.session.passport.user,
+        noteOrderName = req.body.noteOrderName,
+        noteOrderDirection = req.body.noteOrderDirection;
+
+    if ( !noteOrderName || !noteOrderDirection )
+        return res.status( 404 ).send( 'No data received.' );
+
+    var info = database.changeNoteOrder( username, noteOrderName, noteOrderDirection );
+
+    console.log( req.body );
+
+    if ( info.status ) {
+        res.send( JSON.stringify( info ) );
+    }
+    else {
+        res.status( 401 ).send( JSON.stringify( info ) );
+    }
+} );
+
 
 
 

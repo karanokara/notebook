@@ -205,6 +205,27 @@ database.changePassword = function ( username, password ) {
 };
 
 /**
+ * change note order
+ */
+database.changeNoteOrder = function ( username, orderName, direction ) {
+    var data = this.get( username );
+
+    if ( !data )
+        return {
+            status: 0,
+            msg: 'User is not found.'
+        };
+
+    data.settings.noteOrderName = orderName;
+    data.settings.noteOrderDirection = direction;
+    this.update();
+
+    return {
+        status: 1
+    };
+};
+
+/**
  * write data to data file
  */
 database.update = function () {
