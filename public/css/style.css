@@ -93,6 +93,10 @@ body{
     display: none;
 }
 
+.note-empty:last-child {
+    display: block;
+}
+
 .activity {
     visibility: hidden;
     height: 100%;

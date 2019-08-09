@@ -143,14 +143,14 @@ var app = {
 
         $( '.setting-item[data-type="note-order-date-up"]' ).on( 'click', function () {
             if ( !( app.currentNoteOrder.name == 'date' && app.currentNoteOrder.direction == 'up' ) ) {
-                app.changeNoteOrder( 'date', 'up' );
+                app.changeNoteOrder( 'Date', 'up' );
                 menuManager.closeMenu();
             }
         } );
 
         $( '.setting-item[data-type="note-order-date-down"]' ).on( 'click', function () {
             if ( !( app.currentNoteOrder.name == 'date' && app.currentNoteOrder.direction == 'down' ) ) {
-                app.changeNoteOrder( 'date', 'down' );
+                app.changeNoteOrder( 'Date', 'down' );
                 menuManager.closeMenu();
             }
         } );
@@ -352,6 +352,11 @@ var app = {
     },
 
     addNote: function ( btn, title, content ) {
+        if ( title == '' ) {
+            app.messageBar.show( 'Title is empty.' );
+            return;
+        }
+
         var _this = this;
 
         btn.attr( 'disabled', '' );
@@ -365,7 +370,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity();
             _this.makeNote( info.id, title, content, info.date );
-            _this.changeNoteOrder( _this.currentNoteOrder.name, _this.currentNoteOrder.direction );
+            _this.changeNoteOrder( _this.capitalFirstLetter( _this.currentNoteOrder.name ), _this.currentNoteOrder.direction );
             _this.messageBar.show( 'Successfully added a new note.' );
         }, function ( info ) {
             // enable submit btn
@@ -412,6 +417,11 @@ var app = {
         } );
     },
     editNote: function ( btn, id, title, content ) {
+        if ( title == '' ) {
+            app.messageBar.show( 'Title is empty.' );
+            return;
+        }
+
         var _this = this;
 
         btn.attr( 'disabled', '' );
@@ -425,7 +435,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity().promise.then( function () {
                 _this.reviseNote( id, title, content, info.date );
-                _this.changeNoteOrder( _this.currentNoteOrder.name, _this.currentNoteOrder.direction );
+                _this.changeNoteOrder( _this.capitalFirstLetter( _this.currentNoteOrder.name ), _this.currentNoteOrder.direction );
             } );
             _this.messageBar.show( 'Successfully edit a note.' );
         }, function ( info ) {
@@ -680,6 +690,9 @@ var app = {
                 this.reject = reject;
             }.bind( this ) );
         };
+    },
+    capitalFirstLetter: function ( str ) {
+        return str[0].toUpperCase() + str.substring( 1 );
     }
 };
 
