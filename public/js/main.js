@@ -11,6 +11,7 @@ var app = {
     appWrapper: $( '#app-wrapper' ),
     htmlBody: $( 'body' ),
     isInit: false,
+    popupWindow: null,
     currentNoteOrder: {
         name: '',
         direction: '',
@@ -288,35 +289,42 @@ var app = {
             password.attr( 'disabled', '' );
             localSubmit.attr( 'disabled', '' );
             googleSubmit.attr( 'disabled', '' );
+            _this.popupWindow = window.open( '/google', 'Login with Google', "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes, height=700,width=500,left=500,top=0" );
 
-            _this.sendData( '/google', null, null,
-                // success
-                function ( data ) {
-                    // change activity
-                    // _this.appWrapper.append( data.data );
-                    // _this.init();
-                    // activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
-                },
-                // fail
-                function () {
-
-                },
-                // complete
-                function () {
-                    // others to do after complete
+            _this.pollTimer = setInterval( function () {
+                if ( _this.popupWindow.closed !== false ) { // !== is required for compatibility with Opera
+                    clearInterval( _this.pollTimer );
+                    console.log( 'Popup is closed' );
 
                     username.attr( 'disabled', null );
                     password.attr( 'disabled', null );
                     localSubmit.attr( 'disabled', null );
                     googleSubmit.attr( 'disabled', null );
 
+                    _this.popupWindow = null;
                 }
-            );
-
-
+            }, 2000 );
 
         } );
 
+    },
+    /**
+     * Call this fnc from pop up window
+     */
+    finishGoogleLogin: function ( info ) {
+        var _this = this;
+        console.log( 'google login finish' );
+        console.log( info );
+        if ( info && _this.popupWindow ) {
+            // change activity
+            _this.appWrapper.append( info.data );
+            _this.init();
+            activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
+            history.pushState( null, 'note', '/user' );
+
+            clearInterval( _this.pollTimer );
+            _this.popupWindow = null;
+        }
     },
     logout: function () {
         if ( !confirm( 'Are you sure to sign out?' ) )

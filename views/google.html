@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <title>Google</title>
+
+    </head>
+
+    <body>
+        <div id="data" style="display:none">{{data}}</div>
+        <script type="text/javascript">
+
+            var parentWindow = window.opener;
+            var data = JSON.parse( document.querySelector( '#data' ).innerText );
+            if ( parentWindow ) {
+                parentWindow.app.finishGoogleLogin( data );
+            }
+
+            window.close();    
+        </script>
+    </body>
+
+</html>

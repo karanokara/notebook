@@ -3,7 +3,8 @@ var moment = require( 'moment' );
 
 
 var database = {
-    data: null,
+    data: null, // a big obj parsed from user.json
+    size: 0,
 };
 
 /**
@@ -62,25 +63,31 @@ database.get = function ( username ) {
 /**
  * Add a new user
  */
-database.addUser = function ( username, password, name ) {
+database.addUser = function ( username, name, img ) {
     var user = {
         "username": username,
-        "password": password,
+        "password": "3u%$#@$djsaoid@#Fsd92S@#",
         "name": name,
         "lastLogin": null,
         "currentLogin": moment().valueOf(),
-        "lastLoginString": false,
+        "lastLoginString": 'Welcome!',
+        "image": img,
         "list": [],
+        "noteCount": 0,
         "settings": {
-            "noteOrderName": "Name",
-            "noteOrderDirection": "down",
+            "noteOrderName": "Title",
+            "noteOrderDirection": "up",
             "noteDisplay": "list"
         }
     };
 
     this.data.push( user );
     this.update();
-    return user;
+    this.size += 1;
+    return {
+        status: 1,
+        data: user
+    };
 };
 
 /**
