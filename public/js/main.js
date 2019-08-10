@@ -227,6 +227,7 @@ var app = {
         this.changeNoteOrder();
         this.trimNote();
         this.sizeNoteEditView();
+        this.sizeEmptyNote();
     },
     /**
      * handle login activity stuffs
@@ -560,6 +561,12 @@ var app = {
         } );
 
     },
+    sizeEmptyNote: function () {
+        var aboutHeight = $( '#user-activity' ).height() - $( '#note-info-bar' ).outerHeight() - $( '.app-header' ).outerHeight() - 50;
+        $( '#note-empty' ).css( {
+            'height': aboutHeight + 'px',
+        } );
+    },
     /**
      * change note listing order
      */
@@ -859,19 +866,19 @@ var activityManager = {
         man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
 
         // a note must have title
-        man.currentActivity.title.off( 'keyup' ).on( 'keyup', function () {
+        man.currentActivity.title.off( 'change keyup paste' ).on( 'change keyup paste', function () {
             man.isActivityEdited = true;
             man.currentActivity.submit.removeAttr( 'disabled' );
-            man.currentActivity.title.off( 'keyup' );
+            man.currentActivity.title.off( 'change keyup paste' );
         } );
 
         // only content can't be submit on new note
-        man.currentActivity.content.off( 'keyup' ).on( 'keyup', function () {
+        man.currentActivity.content.off( 'change keyup paste' ).on( 'change keyup paste', function () {
             man.isActivityEdited = true;
             if ( activity == 'edit' )
                 man.currentActivity.submit.removeAttr( 'disabled' );
 
-            man.currentActivity.content.off( 'keyup' );
+            man.currentActivity.content.off( 'change keyup paste' );
         } );
 
         man.currentActivity.submit.off( 'click' ).on( 'click', function () {
