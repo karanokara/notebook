@@ -90,11 +90,11 @@ body{
 }
 
 .note-empty {
-    display: none;
+    display: none !important;
 }
 
 .note-empty:last-child {
-    display: block;
+    display: flex !important;
 }
 
 .activity {
