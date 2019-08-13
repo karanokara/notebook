@@ -618,9 +618,9 @@ var app = {
 
         if ( orderName == 'title' ) {
             compareValue = function ( a, b ) {
-                // console.log( $( a ).find( '.note-title' ).text() );
-                // console.log( $( b ).find( '.note-title' ).text() );
-                return ( $( a ).find( '.note-title' ).text() > $( b ).find( '.note-title' ).text() ) ? 1 : -1;
+                var aStr = $( a ).find( '.note-title' ).text().toLowerCase(),
+                    bStr = $( b ).find( '.note-title' ).text().toLowerCase();
+                return ( aStr > bStr ) ? 1 : -1;
             };
         }
         else if ( orderName == 'date' ) {
