@@ -265,6 +265,8 @@ var app = {
                     _this.init();
                     activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
                     history.pushState( null, 'note', '/user' );
+                    document.title = 'Notebook - User Notes';
+
                 },
                 // fail
                 function () {
@@ -322,6 +324,7 @@ var app = {
             _this.init();
             activityManager.openActivity( 'user', '#user-activity', null, activityManager.disconnectActivity.bind( activityManager ) );
             history.pushState( null, 'note', '/user' );
+            document.title = 'Notebook - User Notes';
 
             clearInterval( _this.pollTimer );
             _this.popupWindow = null;
@@ -346,6 +349,7 @@ var app = {
                     $( '#menu-wrapper' ).remove();
                 } );
                 history.pushState( null, 'note', '/login' );
+                document.title = 'Notebook - Login';
             },
             // fail
             function () {
@@ -415,12 +419,12 @@ var app = {
         this.noteList.append( str );
         var note = $( '#note' + id );
         this.trimNote( note );
-        note.find( '.note-setting-btn' )[0].addEventListener( 'click', function ( event ) {
+        note.find( '.note-setting-btn' )[ 0 ].addEventListener( 'click', function ( event ) {
             menuManager.openMenu( '#note-setting', title, note );
             event.stopPropagation();
         } );
 
-        note[0].addEventListener( 'click', function () {
+        note[ 0 ].addEventListener( 'click', function () {
             app.currentFocusNote = this.getAttribute( 'note-id' );
             activityManager.openActivity( 'view', '#note-view-activity', $( this ) );
         } );
@@ -644,12 +648,12 @@ var app = {
 
         if ( orderDirection == 'up' ) {
             for ( var i = 0; i < notes.length; ++i ) {
-                this.noteList.append( tempList[i] );
+                this.noteList.append( tempList[ i ] );
             }
         }
         else {
             for ( var i = ( notes.length - 1 ); i >= 0; --i ) {
-                this.noteList.append( tempList[i] );
+                this.noteList.append( tempList[ i ] );
             }
         }
     },
@@ -718,7 +722,7 @@ var app = {
         };
     },
     capitalFirstLetter: function ( str ) {
-        return str[0].toUpperCase() + str.substring( 1 );
+        return str[ 0 ].toUpperCase() + str.substring( 1 );
     }
 };
 
@@ -863,7 +867,7 @@ var activityManager = {
             man.currentActivity.content.val( content );
         }
 
-        man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
+        man.currentActivity.activityTitle.text( activity[ 0 ].toUpperCase() + activity.substr( 1 ) );
 
         // a note must have title
         man.currentActivity.title.off( 'change keyup paste' ).on( 'change keyup paste', function () {
@@ -958,7 +962,7 @@ var activityManager = {
         } );
 
         if ( this.hasOwnProperty( activity + 'Activity' ) )
-            this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
+            this[ activity + 'Activity' ]( activity, newActivity.dom, associateItemDom );
 
         menuManager.closeMenu();
     },
