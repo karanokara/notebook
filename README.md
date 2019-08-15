@@ -2,14 +2,17 @@
 A web-based notebook application
 
 
-
 ## To Start
 ```bash
 $ npm start
 ```
 
-## Techniques
+## Testing Account
+username: abc
+password: 123
 
+
+## Techniques
 - Node.js
 - Passport.js
 - jQuery.js

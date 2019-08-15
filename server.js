@@ -13,7 +13,6 @@ var tool = require( './tool' );
 var view = require( './routes/view' );
 var passport = require( 'passport' );
 var strategyLocal = require( 'passport-local' ).Strategy;
-var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
 
 // define the template engine
