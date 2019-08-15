@@ -8,8 +8,10 @@ $ npm start
 ```
 
 ## Testing Account
-username: abc
-password: 123
+
+|username|password|
+|:-------|:-------|
+|abc| 123|
 
 
 ## Techniques
