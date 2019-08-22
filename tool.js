@@ -19,8 +19,8 @@ var tools = {
      * @param {*} fileName 
      * @param {*} data 
      */
-    writeFile: function ( fileName, data ) {
-        fs.writeFileSync( fileName, data )
+    writeFile: function ( filepath, data ) {
+        fs.writeFileSync( path.resolve( __dirname, filepath ), data )
     },
     /**
      * render with template

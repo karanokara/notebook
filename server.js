@@ -25,7 +25,7 @@ server.engine( 'html', function ( filePath, view, callback ) {
         return callback( null, renderedString );
     } )
 } );
-server.set( 'views', './views' );
+server.set( 'views', path.resolve( __dirname, './views' ) );
 server.set( 'view engine', 'html' );
 
 
