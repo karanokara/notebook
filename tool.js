@@ -28,7 +28,7 @@ var tools = {
      * @returns A HTML string after templating
      */
     render: function ( viewTemplate, view ) {
-        var path = 'views/' + viewTemplate + '.html'
+        var path = './views/' + viewTemplate + '.html'
         return mustache.render( this.readFile( path ), view );
     },
     /**
@@ -37,12 +37,12 @@ var tools = {
      * @returns An object
      */
     fetchNoteData: function ( fileName ) {
-        var dataStr = this.readFile( 'data/' + fileName + '.json' );
+        var dataStr = this.readFile( './data/' + fileName + '.json' );
         return JSON.parse( dataStr );
     },
     wirteNoteData: function ( fileName, data ) {
         var dataStr = JSON.stringify( data );
-        this.writeFile( 'data/' + fileName + '.json', dataStr );
+        this.writeFile( './data/' + fileName + '.json', dataStr );
     },
     /**
      * authenticate user first
