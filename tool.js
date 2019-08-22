@@ -1,15 +1,16 @@
 var fs = require( 'fs' );
 var mustache = require( 'mustache' );
+var path = require( "path" );
 
 var tools = {
     /**
      * synchronously reading file
      * root of path this file folder is ../notebook
      */
-    readFile: function ( path ) {
+    readFile: function ( filepath ) {
         // read file synchronously
         // must stop here to be done 
-        var buffer = fs.readFileSync( path );
+        var buffer = fs.readFileSync( path.resolve( __dirname, filepath ) );
         //console.log( buffer );
         return buffer.toString();
     },
