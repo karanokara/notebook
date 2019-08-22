@@ -1,2 +1,4 @@
+# .gitignore will prevent untracked files from being added (without an add -f) to the set of files tracked by git, 
+# however git will continue to track any files that are already being tracked.
 node_modules
 data
