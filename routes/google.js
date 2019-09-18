@@ -38,12 +38,12 @@ passport.use( new strategyGoogle(
         };
 
         function callback ( info ) {
-            var userid = info.data['_id'];
+            var userId = info.data['_id'];
             info.data = view.userView( info.data ).body;
 
             // session is storing a obj including username
             // this obj == req.session.passport.user
-            done( null, { userid: userid, username: userData.username, }, info );
+            done( null, { userId: userId, username: userData.username, }, info );
         }
 
         database.userLogin( null, userData.username, null, null, function ( info ) {
