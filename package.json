@@ -13,6 +13,7 @@
     "http-errors": "~1.6.2",
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
+    "mongodb": "^3.3.2",
     "morgan": "~1.9.0",
     "mustache": "^3.0.1",
     "passport": "^0.4.0",

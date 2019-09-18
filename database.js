@@ -1,250 +1,418 @@
 var tool = require( './tool' );
+var privateData = require( './private' );
 var moment = require( 'moment' );
-
+var MongoClient = require( 'mongodb' ).MongoClient;
+var ObjectId = require( 'mongodb' ).ObjectId;
+var assert = require( 'assert' );
 
 var database = {
-    data: null, // a big obj parsed from user.json
-    size: 0,
-};
+    // DB client
+    client: new MongoClient( privateData.mongodbURI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    } ),
+    // the note table
+    noteTable: null,
 
-/**
- * check user login
- * if success, return user data
- * else, return message
- */
-database.userLogin = function ( username, givenPassword, isUsingPassword ) {
-    var obj = this.get( username );
+    /**
+     * check user login
+     * if success, return user data
+     * else, return message
+     */
+    userLogin: function ( usernameOrId, givenPassword, isUsingPassword, callback ) {
+        var _this = this,
+            filter = ( isUsingPassword ) ? { username: usernameOrId } : { _id: new ObjectId( usernameOrId ) };
 
-    if ( isUsingPassword == undefined )
-        isUsingPassword = 1;
+        // find one document/row from note data table
+        // obj is the found user data obj
+        _this.read( filter, function ( obj ) {
 
-    if ( obj ) {
-        if ( !isUsingPassword || obj['password'] === givenPassword ) {
-            var last = obj['currentLogin'];
+            if ( obj ) {
+                if ( !isUsingPassword || obj['password'] === givenPassword ) {
+                    // update last login to now
+                    _this.update( { _id: obj['_id'] },
+                        {
+                            $set: { lastLogin: moment().valueOf() }
+                        }
+                    );
 
-            obj['lastLogin'] = last;
-            obj['lastLoginString'] = moment( last ).format( 'YYYY/MM/DD - HH:mm' );
-            obj['currentLogin'] = moment().valueOf();
-            this.update();
+                    // update login string to be displayed 
+                    obj['lastLoginString'] = moment( obj['lastLogin'] ).format( 'YYYY/MM/DD - HH:mm' );
 
-            return {
+                    return callback( {
+                        status: 1,
+                        data: obj
+                    } );
+                }
+
+                return callback( {
+                    status: 0,
+                    msg: 'Password is not matched.',
+                } );
+            }
+
+            return callback( {
+                status: 0,
+                msg: 'User is not exist.',
+            } );
+        } );
+    },
+
+    /**
+    * create a user data
+    */
+    create: function ( doc, callback ) {
+        // Insert a single document
+        this.noteTable.insertOne( doc, function ( err, r ) {
+            assert.equal( null, err );
+            assert.equal( 1, r.insertedCount );
+
+            // pass by inserted OjectId
+            callback( r.insertedId );
+        } );
+    },
+
+    /**
+     * read user data by filter
+     */
+    read: function ( filter, callback ) {
+        this.noteTable.findOne( filter, function ( err, obj ) {
+            assert.equal( err, null );
+            callback( obj );
+        } );
+    },
+
+    /**
+     * update user data for 1 colleciton by filter
+     */
+    update: function ( filter, update, callback ) {
+        // Update a single document/row
+        this.noteTable.updateOne( filter, update,
+            {
+                upsert: false,              // not update the whole document
+            }, function ( err, updateResult ) {
+                assert.equal( null, err );
+                //assert.equal( 1, updateResult.modifiedCount );
+                //console.log( updateResult );
+
+                if ( callback )
+                    // if there is a row get updated
+                    // passing true
+                    callback( updateResult.modifiedCount > 0 );
+            }
+        );
+    },
+
+    /**
+     * Add a new user
+     */
+    addUser: function ( userData, callback ) {
+        var user = {
+            "username": userData.username,
+            "password": null,
+            "name": userData.name,
+            "lastLogin": moment().valueOf(),
+            "lastLoginString": 'Welcome!',
+            "image": userData.img,
+            "list": [],
+            "noteCount": 0,
+            "settings": {
+                "noteOrderName": "Title",
+                "noteOrderDirection": "up",
+                "noteDisplay": "list"
+            }
+        };
+
+        this.create( user, function ( userId ) {
+            user._id = userId;
+
+            callback( {
                 status: 1,
-                data: obj
-            };
-        }
+                data: user
+            } );
+        } )
+    },
 
-        return {
-            status: 0,
-            msg: 'Password is not matched.',
-        };
+    /**
+     * delete a note by userId, noteId
+     */
+    deleteNote: function ( userId, noteId, callback ) {
+        this.update(
+            {
+                "_id": new ObjectId( userId )
+            },
+            {
+                $pull: {
+                    'list': {
+                        'noteId': Number( noteId )
+                    }
+                }
+            },
+            function ( success ) {
+                if ( success )
+                    callback( { status: 1 } );
+                else
+                    callback( {
+                        status: 0,
+                        msg: 'Note id:' + noteId + ' is not found.'
+                    } );
+            }
+        );
+
+    },
+
+    /**
+     * edit note by userId, noteId
+     */
+    editNote: function ( userId, noteId, notetitle, noteContent, callback ) {
+        var date = moment().format( 'YYYY/MM/DD - HH:mm' );
+
+        this.update(
+            {
+                "_id": new ObjectId( userId ),
+                'list.noteId': Number( noteId )
+            },
+            {
+                $set: {
+                    'list.$.title': notetitle,
+                    'list.$.note': noteContent,
+                    'list.$.lastUpdate': date
+                }
+            },
+            function ( success ) {
+                if ( success )
+                    callback( { status: 1, date: date, } );
+                else
+                    callback( {
+                        status: 0,
+                        msg: 'Note ' + notetitle + ' is not found.'
+                    } );
+            }
+        );
+    },
+
+    /**
+     * add note by userId, note title, note content
+     */
+    addNote: function ( userId, noteTitle, noteContent, callback ) {
+        var date = moment().format( 'YYYY/MM/DD - HH:mm' ),
+            defer = tool.deferred(),
+            _this = this,
+            noteCount;
+
+        _this.noteTable.findOne(
+            { '_id': new ObjectId( userId ) },
+            {
+                projection: {
+                    '_id': 0,
+                    'noteCount': 1
+                }
+            },
+            function ( err, result ) {
+                assert.equal( err, null );
+
+                defer.resolve();
+                noteCount = 1 + Number( result['noteCount'] );
+            }
+        );
+
+        defer.promise.then( function () {
+            _this.update(
+                {
+                    "_id": new ObjectId( userId )
+                },
+                {
+                    $set: {
+                        'noteCount': noteCount
+                    },
+                    $push: {
+                        list: {
+                            "title": noteTitle,
+                            "noteId": noteCount,
+                            "type": "file",
+                            "lastUpdate": null,
+                            "create": date,
+                            "note": noteContent,
+                        }
+                    }
+                },
+                function ( success ) {
+                    if ( success )
+                        callback( { status: 1, date: date, } );
+                    else
+                        callback( {
+                            status: 0,
+                            msg: 'Note ' + noteTitle + ' is not found.'
+                        } );
+                }
+            );
+        } );
+    },
+
+    /**
+     * change the user display name
+     */
+    changeDisplayName: function ( userId, name, callback ) {
+        this.update(
+            {
+                "_id": new ObjectId( userId )
+            },
+            {
+                $set: {
+                    'name': name
+                }
+            },
+            function ( success ) {
+                if ( success )
+                    callback( { status: 1 } );
+                else
+                    callback( {
+                        status: 0,
+                        msg: 'User is not found.'
+                    } );
+            }
+        );
+    },
+
+    /**
+     * change the user password
+     */
+    changePassword: function ( userId, password, callback ) {
+        this.update(
+            {
+                "_id": new ObjectId( userId )
+            },
+            {
+                $set: {
+                    'password': password
+                }
+            },
+            function ( success ) {
+                if ( success )
+                    callback( { status: 1 } );
+                else
+                    callback( {
+                        status: 0,
+                        msg: 'User is not found.'
+                    } );
+            }
+        );
+    },
+
+    /**
+     * change note order
+     */
+    changeNoteOrder: function ( userId, orderName, direction, callback ) {
+        this.update(
+            {
+                "_id": new ObjectId( userId )
+            },
+            {
+                $set: {
+                    'settings.noteOrderName': orderName,
+                    'settings.noteOrderDirection': direction
+                }
+            },
+            function ( success ) {
+                if ( success )
+                    callback( { status: 1 } );
+                else
+                    callback( {
+                        status: 0,
+                        msg: 'User is not found.'
+                    } );
+            }
+        );
+    },
+
+    /**
+     * init the database by fetching from mongo DB
+     */
+    init: function ( path ) {
+        var _this = this;
+
+        _this.client.connect( err => {
+            assert.equal( null, err );          // make sure no error to continue
+
+            // get the note collection/table from a DB
+            var noteTable = _this.client.db( "notebook" ).collection( "data" );
+
+            //_this.data = tool.fetchNoteData( 'user' );
+            //_this.size = this.data.length;
+
+            // perform actions on the collection object
+            //_this.client.close();             // close this connection
+
+            _this.noteTable = noteTable;
+
+            //_this.test();
+        } );
+
+    },
+
+    // testing database
+    test: function () {
+
+        var defer1 = tool.deferred(),
+            defer2 = tool.deferred(),
+            _this = this,
+            noteId;
+
+        // add note
+        _this.addNote( '5d7dc8c4349bc75cb7c92634', '123456', 'aaaaabbbbbbcccccc',
+            function () {
+                database.read( { "username": "abc", }, function ( doc ) {
+                    var re = doc['list'].pop();
+                    if ( re.title == '123456' ) {
+                        console.log( re );
+                        defer1.resolve();
+                        noteId = re.noteId;
+                    }
+                    else {
+                        console.log( 'Wrong!' );
+                        defer1.reject();
+                    }
+                } );
+            }
+        );
+
+        // modify note title
+        defer1.promise.then( function () {
+            _this.editNote( '5d7dc8c4349bc75cb7c92634', noteId, '654321', 'dddddeeeeffff',
+                function () {
+                    database.read( { "username": "abc", }, function ( doc ) {
+                        var re = doc['list'].pop();
+                        if ( re.noteId == noteId && re.title == '654321' ) {
+                            console.log( re );
+                            defer2.resolve();
+                        }
+                        else {
+                            console.log( 'Wrong!' );
+                            defer2.reject();
+                        }
+                    } );
+                }
+            );
+        } );
+
+        // remove note
+        defer2.promise.then( function () {
+            _this.deleteNote( '5d7dc8c4349bc75cb7c92634', noteId,
+                function () {
+                    database.read( { "username": "abc", }, function ( doc ) {
+                        var re = doc['list'].pop();
+                        if ( re.noteId == noteId ) {
+                            console.log( 'Wrong!' );
+                        }
+                        else {
+                            console.log( doc['list'] );
+                        }
+                    } );
+                }
+            );
+        } );
+
     }
-
-    return {
-        status: 0,
-        msg: 'User is not exist.',
-    };
-};
-
-/**
- * get user data by username
- */
-database.get = function ( username ) {
-
-    for ( var i = 0; i < this.size; ++i ) {
-        var obj = this.data[i];
-        if ( obj['username'] === username ) {
-            return obj;
-        }
-    }
-
-    return null;
-};
-
-/**
- * Add a new user
- */
-database.addUser = function ( username, name, img ) {
-    var user = {
-        "username": username,
-        "password": "3u%$#@$djsaoid@#Fsd92S@#",
-        "name": name,
-        "lastLogin": null,
-        "currentLogin": moment().valueOf(),
-        "lastLoginString": 'Welcome!',
-        "image": img,
-        "list": [],
-        "noteCount": 0,
-        "settings": {
-            "noteOrderName": "Title",
-            "noteOrderDirection": "up",
-            "noteDisplay": "list"
-        }
-    };
-
-    this.data.push( user );
-    this.update();
-    this.size += 1;
-    return {
-        status: 1,
-        data: user
-    };
-};
-
-/**
- * delete a note by username, noteId
- */
-database.deleteNote = function ( username, noteId ) {
-    var list = this.get( username ).list;
-
-    for ( var i = 0; i < list.length; ++i ) {
-        if ( Number( noteId ) == list[i]["noteId"] ) {
-            list.splice( i, 1 );
-            this.update();
-            return {
-                status: 1
-            };
-        }
-    }
-
-    return {
-        status: 0,
-        msg: 'Note id:' + noteId + ' is not found.'
-    };
-};
-
-/**
- * edit note by username, noteId
- */
-database.editNote = function ( username, noteId, notetitle, noteContent ) {
-    var list = this.get( username ).list,
-        note = null,
-        found = 0;
-
-    for ( var i = 0; i < list.length && !found; ++i ) {
-        note = list[i];
-
-        if ( note['noteId'] == Number( noteId ) ) {
-            found = 1;
-        }
-    }
-
-    if ( !found )
-        return {
-            status: 0,
-            msg: 'Note ' + notetitle + ' is not found.'
-        };
-
-    note['title'] = notetitle;
-    note['note'] = noteContent;
-    var date = moment().format( 'YYYY/MM/DD - HH:mm' );
-    note['lastUpdate'] = date;
-
-    this.update();
-    return {
-        status: 1,
-        date: date,
-    };
-};
-
-/**
- * delete note by username, noteTitle
- */
-database.addNote = function ( username, noteTitle, noteContent ) {
-    var obj = this.get( username ),
-        noteId = Number( obj.noteCount ) + 1,
-        create = moment().format( 'YYYY/MM/DD - HH:mm' ),
-        note = {
-            "title": noteTitle,
-            "noteId": noteId,
-            "type": "file",
-            "lastUpdate": null,
-            "create": create,
-            "note": noteContent,
-        };
-
-    obj.noteCount = noteId;
-    obj['list'].push( note );
-    this.update();
-
-    return {
-        status: 1,
-        id: noteId,
-        date: create
-    };
-};
-
-/**
- * change the user display name
- */
-database.changeDisplayName = function ( username, name ) {
-    var data = this.get( username );
-
-    if ( !data )
-        return {
-            status: 0,
-            msg: 'User is not found.'
-        };
-
-    data.name = name;
-    this.update();
-    return {
-        status: 1
-    };
-};
-
-/**
- * change the user password
- */
-database.changePassword = function ( username, password ) {
-    var data = this.get( username );
-
-    if ( !data )
-        return {
-            status: 0,
-            msg: 'User is not found.'
-        };
-
-    data.password = password;
-    this.update();
-    return {
-        status: 1
-    };
-};
-
-/**
- * change note order
- */
-database.changeNoteOrder = function ( username, orderName, direction ) {
-    var data = this.get( username );
-
-    if ( !data )
-        return {
-            status: 0,
-            msg: 'User is not found.'
-        };
-
-    data.settings.noteOrderName = orderName;
-    data.settings.noteOrderDirection = direction;
-    this.update();
-
-    return {
-        status: 1
-    };
-};
-
-/**
- * write data to data file
- */
-database.update = function () {
-    tool.wirteNoteData( 'user', this.data );
-};
-
-/**
- * init the database by fetching a JSON file
- */
-database.init = function ( path ) {
-    this.data = tool.fetchNoteData( 'user' );
-    this.size = this.data.length;
 };
 
 database.init();

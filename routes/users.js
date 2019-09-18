@@ -17,20 +17,21 @@ router.use( '/', function ( req, res, next ) {
 /* GET users listing. */
 router.get( '/', tool.authenticateHere, function ( req, res, next ) {
 
-    var username = req.session.passport.user,
-        password = '123',
-        re = database.userLogin( username, password, 0 );
+    var userId = req.session.passport.user.userId;
 
-    if ( re.status ) {
+    database.userLogin( userId, '', 0, function ( result ) {
+        if ( result.status ) {
 
-        // console.log( view );
+            // console.log( view );
 
-        // render index.html using view obj
+            // render index.html using view obj
 
-        res.render( 'index', view.userView( re.data ) );
-    }
-    else
-        res.send( re.msg );
+            res.render( 'index', view.userView( result.data ) );
+        }
+        else
+            res.send( result.msg );
+    } );
+
 } );
 
 module.exports = router;

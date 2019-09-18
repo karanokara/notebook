@@ -31,21 +31,33 @@ passport.use( new strategyGoogle(
         console.log( refreshToken );
         console.log( profile );
 
-        var username = profile.id,
-            name = profile.displayName,
-            imageURL = profile._json.picture,
-            info = database.userLogin( username, '', 0 );
+        var userData = {
+            username: profile.id,
+            name: profile.displayName,
+            img: profile._json.picture,
+        };
 
-        if ( !info.status ) {
-            // user not exist, add a new one
-            info = database.addUser( username, name, imageURL );
+        function callback ( info ) {
+            var userid = info.data['_id'];
+            info.data = view.userView( info.data ).body;
+
+            // session is storing a obj including username
+            // this obj == req.session.passport.user
+            done( null, { userid: userid, username: userData.username, }, info );
         }
 
-        info.data = view.userView( info.data ).body;
+        database.userLogin( userData.username, '', 0, function ( info ) {
+            if ( !info.status ) {
+                // user not exist, add a new one
+                database.addUser( userData, function ( info ) {
+                    callback( info );
+                } );
+            }
+            else {
+                callback( info );
+            }
+        } );
 
-        // user is just username
-        // so session is storing username
-        return done( null, username, info );
     }
 ) );
 

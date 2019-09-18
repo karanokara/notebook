@@ -2,3 +2,4 @@
 # however git will continue to track any files that are already being tracked.
 node_modules
 data
+private.js

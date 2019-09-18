@@ -99,21 +99,22 @@ passport.use( new strategyLocal(
     // A verify callback fnc for passport.authenticate() 
     // after parsing the credentials
     function ( username, password, done ) {
-        console.log( username );
-        console.log( password );
+        console.log( 'Login user: ' + username );
+        console.log( 'password: ' + password );
 
-        var info = database.userLogin( username, password );
+        database.userLogin( username, password, 1, function ( info ) {
+            if ( info.status ) {
+                var userId = info.data['_id'];
+                info.data = view.userView( info.data ).body;
 
-        if ( info.status ) {
-            info.data = view.userView( info.data ).body;
-
-            // user is just username
-            // so session is storing username
-            return done( null, username, info );
-        }
-        else {
-            return done( null, false, info );
-        }
+                // session is storing a obj including username
+                // this obj == req.session.passport.user
+                done( null, { userId: userId, username: username, }, info );
+            }
+            else {
+                done( null, false, info );
+            }
+        } );
     }
 ) );
 

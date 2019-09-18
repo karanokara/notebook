@@ -13,8 +13,8 @@ var app = {
     isInit: false,
     popupWindow: null,
     currentNoteOrder: {
-        name: '',
-        direction: '',
+        name: null,
+        direction: null,
     },
     messageBar: {
         /**
@@ -383,7 +383,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity();
             _this.makeNote( info.id, title, content, info.date );
-            _this.changeNoteOrder( _this.capitalFirstLetter( _this.currentNoteOrder.name ), _this.currentNoteOrder.direction );
+            _this.changeNoteOrder();
             _this.messageBar.show( 'Successfully added a new note.' );
         }, function ( info ) {
             // enable submit btn
@@ -419,12 +419,12 @@ var app = {
         this.noteList.append( str );
         var note = $( '#note' + id );
         this.trimNote( note );
-        note.find( '.note-setting-btn' )[ 0 ].addEventListener( 'click', function ( event ) {
+        note.find( '.note-setting-btn' )[0].addEventListener( 'click', function ( event ) {
             menuManager.openMenu( '#note-setting', title, note );
             event.stopPropagation();
         } );
 
-        note[ 0 ].addEventListener( 'click', function () {
+        note[0].addEventListener( 'click', function () {
             app.currentFocusNote = this.getAttribute( 'note-id' );
             activityManager.openActivity( 'view', '#note-view-activity', $( this ) );
         } );
@@ -448,7 +448,7 @@ var app = {
             activityManager.clearActivity();
             activityManager.closeActivity().promise.then( function () {
                 _this.reviseNote( id, title, content, info.date );
-                _this.changeNoteOrder( _this.capitalFirstLetter( _this.currentNoteOrder.name ), _this.currentNoteOrder.direction );
+                _this.changeNoteOrder();
             } );
             _this.messageBar.show( 'Successfully edit a note.' );
         }, function ( info ) {
@@ -577,11 +577,15 @@ var app = {
     changeNoteOrder: function ( orderName, orderDirection ) {
         var menu = $( '#note-order-setting' );
 
-        if ( !orderName || !orderDirection ) {
-            orderName = this.orderBtn.find( '.order-name' ).text().toLowerCase();
-            orderDirection = this.orderBtn.attr( 'order' );
+        // if order is not setup
+        if ( !this.currentNoteOrder.name ) {
+            this.currentNoteOrder.name = this.orderBtn.find( '.order-name' ).text().toLowerCase();
+            this.currentNoteOrder.direction = this.orderBtn.attr( 'order' );
         }
-        else {
+
+        // if there are specified order parameter
+        // need to update server
+        if ( orderName || orderDirection ) {
             this.orderBtn.find( '.order-name' ).text( orderName );
             this.orderBtn.attr( 'order', orderDirection );
 
@@ -595,19 +599,17 @@ var app = {
                     app.messageBar.show( 'Fail to update current order choice to the server.' );
                 }, null );
 
-            orderName = orderName.toLowerCase();
+            this.currentNoteOrder.name = orderName.toLowerCase();
+            this.currentNoteOrder.direction = orderDirection;
         }
 
-        this.currentNoteOrder.name = orderName;
-        this.currentNoteOrder.direction = orderDirection;
-
         this.orderBtn.find( '.order-img' ).css( 'display', 'none' );
-        this.orderBtn.find( '#order-img-' + orderDirection ).css( 'display', '' );
+        this.orderBtn.find( '#order-img-' + this.currentNoteOrder.direction ).css( 'display', '' );
         menu.find( '.setting-item.current-choice' ).removeClass( 'current-choice' );
-        menu.find( '.setting-item[data-type="note-order-' + orderName + '-' + orderDirection + '"]' ).addClass( 'current-choice' );
+        menu.find( '.setting-item[data-type="note-order-' + this.currentNoteOrder.name + '-' + this.currentNoteOrder.direction + '"]' ).addClass( 'current-choice' );
 
         // process sorting
-        this.sortingNote( orderName, orderDirection );
+        this.sortingNote( this.currentNoteOrder.name, this.currentNoteOrder.direction );
     },
     /**
      * Sorting the note list by order name and order direction
@@ -648,12 +650,12 @@ var app = {
 
         if ( orderDirection == 'up' ) {
             for ( var i = 0; i < notes.length; ++i ) {
-                this.noteList.append( tempList[ i ] );
+                this.noteList.append( tempList[i] );
             }
         }
         else {
             for ( var i = ( notes.length - 1 ); i >= 0; --i ) {
-                this.noteList.append( tempList[ i ] );
+                this.noteList.append( tempList[i] );
             }
         }
     },
@@ -722,7 +724,7 @@ var app = {
         };
     },
     capitalFirstLetter: function ( str ) {
-        return str[ 0 ].toUpperCase() + str.substring( 1 );
+        return str[0].toUpperCase() + str.substring( 1 );
     }
 };
 
@@ -867,7 +869,7 @@ var activityManager = {
             man.currentActivity.content.val( content );
         }
 
-        man.currentActivity.activityTitle.text( activity[ 0 ].toUpperCase() + activity.substr( 1 ) );
+        man.currentActivity.activityTitle.text( activity[0].toUpperCase() + activity.substr( 1 ) );
 
         // a note must have title
         man.currentActivity.title.off( 'change keyup paste' ).on( 'change keyup paste', function () {
@@ -962,7 +964,7 @@ var activityManager = {
         } );
 
         if ( this.hasOwnProperty( activity + 'Activity' ) )
-            this[ activity + 'Activity' ]( activity, newActivity.dom, associateItemDom );
+            this[activity + 'Activity']( activity, newActivity.dom, associateItemDom );
 
         menuManager.closeMenu();
     },
