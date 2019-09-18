@@ -342,7 +342,6 @@ var app = {
                 // change activity
                 _this.appWrapper.append( data.data );
                 _this.login();
-                _this.isInit = false;
                 activityManager.openActivity( 'login', '#login-activity', null, function () {
                     activityManager.disconnectActivity();
                     activityManager.removeActivity( 'note-edit-activity note-view-activity' );
@@ -350,6 +349,7 @@ var app = {
                 } );
                 history.pushState( null, 'note', '/login' );
                 document.title = 'Notebook - Login';
+                _this.reset();
             },
             // fail
             function () {
@@ -659,6 +659,20 @@ var app = {
             }
         }
     },
+
+    /**
+     * reset the app
+     */
+    reset: function () {
+        this.currentNoteOrder = {
+            name: null,
+            direction: null,
+        };
+
+        this.isInit = false;
+
+    },
+
     /**
      * 
      * @param {*} target 
