@@ -19,7 +19,7 @@ router.get( '/', tool.authenticateHere, function ( req, res, next ) {
 
     var userId = req.session.passport.user.userId;
 
-    database.userLogin( userId, '', 0, function ( result ) {
+    database.userLogin( userId, null, null, null, function ( result ) {
         if ( result.status ) {
 
             // console.log( view );

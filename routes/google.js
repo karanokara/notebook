@@ -46,7 +46,7 @@ passport.use( new strategyGoogle(
             done( null, { userid: userid, username: userData.username, }, info );
         }
 
-        database.userLogin( userData.username, '', 0, function ( info ) {
+        database.userLogin( null, userData.username, null, null, function ( info ) {
             if ( !info.status ) {
                 // user not exist, add a new one
                 database.addUser( userData, function ( info ) {

@@ -102,7 +102,7 @@ passport.use( new strategyLocal(
         console.log( 'Login user: ' + username );
         console.log( 'password: ' + password );
 
-        database.userLogin( username, password, 1, function ( info ) {
+        database.userLogin( null, username, password, 1, function ( info ) {
             if ( info.status ) {
                 var userId = info.data['_id'];
                 info.data = view.userView( info.data ).body;

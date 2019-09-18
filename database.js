@@ -19,9 +19,9 @@ var database = {
      * if success, return user data
      * else, return message
      */
-    userLogin: function ( usernameOrId, givenPassword, isUsingPassword, callback ) {
+    userLogin: function ( userId, username, givenPassword, isUsingPassword, callback ) {
         var _this = this,
-            filter = ( isUsingPassword ) ? { username: usernameOrId } : { _id: new ObjectId( usernameOrId ) };
+            filter = ( userId ) ? { _id: new ObjectId( userId ) } : { username: username };
 
         // find one document/row from note data table
         // obj is the found user data obj
