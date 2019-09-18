@@ -238,11 +238,11 @@ var database = {
                 },
                 function ( success ) {
                     if ( success )
-                        callback( { status: 1, date: date, } );
+                        callback( { status: 1, id: noteCount, date: date, } );
                     else
                         callback( {
                             status: 0,
-                            msg: 'Note ' + noteTitle + ' is not found.'
+                            msg: 'Failed to add the new note.'
                         } );
                 }
             );
