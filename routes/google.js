@@ -5,14 +5,15 @@ var database = require( '../database' );
 var view = require( './view' );
 var router = express.Router();
 var passport = require( 'passport' );
+var privateData = require( '../private' );
 var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
 
 
 passport.use( new strategyGoogle(
     {
-        clientID: '138963585819-r1senhdn9mnlv9k6b198u9n1ti1fs8at.apps.googleusercontent.com',
-        clientSecret: 'zFAv-QmM5R9C7QlE2YtfpXrj',
+        clientID: privateData.googleClientID,
+        clientSecret: privateData.googleClientSecret,
         // After authorization, Google
         // will redirect the user back to this application at  
         callbackURL: "/google/callback"
