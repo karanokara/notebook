@@ -1,6 +1,6 @@
 <div id="user-activity" class="activity user-activity fixed-top container pb-5 pt-3 bg-light">
     <div class="app-header d-flex align-items-center p-3 mb-3 text-dark rounded shadow-sm">
-        <img class="mr-3" src="{{#userData.image}}{{.}}{{/userData.image}}{{^userData.image}}/files/images/note-no-shadow.svg{{/userData.image}}" alt="" width="50" height="50">
+        <img class="mr-3" src="{{#userData.image}}{{.}}{{/userData.image}}{{^userData.image}}/img/note-no-shadow.svg{{/userData.image}}" alt="" width="50" height="50">
         <div class="">
             <h6 class="mb-0">Notebook</h6>
             <small id="display-name" username="{{userData.username}}" class="text-secondary">@{{userData.name}}</small>
@@ -11,7 +11,7 @@
     </div>
 
     <div id="note-info-bar" class="d-flex rounded my-3">
-        <button id="order-btn" type="button" class="d-flex py-2 pr-2 btn btn-sm order-btn bg-transparent" order="{{userData.settings.noteOrderDirection}}"><span class="order-name font-weight-bold text-secondary">{{userData.settings.noteOrderName}}</span><img id="order-img-up" class="order-img ml-1" src="/files/images/arrow-up.svg" alt="" width="24" height="24"><img id="order-img-down" class="order-img ml-1" src="/files/images/arrow-down.svg" alt="" width="24" height="24"></button>
+        <button id="order-btn" type="button" class="d-flex py-2 pr-2 btn btn-sm order-btn bg-transparent" order="{{userData.settings.noteOrderDirection}}"><span class="order-name font-weight-bold text-secondary">{{userData.settings.noteOrderName}}</span><img id="order-img-up" class="order-img ml-1" src="/img/arrow-up.svg" alt="" width="24" height="24"><img id="order-img-down" class="order-img ml-1" src="/img/arrow-down.svg" alt="" width="24" height="24"></button>
         {{#userData.lastLoginString}}<div id="last-login" class="btn-sm py-2 pr-2 ml-auto last-login text-secondary">Last login: {{.}}</div>{{/userData.lastLoginString}}
     </div>
 
@@ -19,7 +19,7 @@
         <div id="note-empty" class="note-empty d-flex flex-column justify-content-center align-items-center">
             <div class="text-center">
                 <div class="empty-image">
-                    <img class="" src="/files/images/empty-file.svg" alt="" width="140" height="140">
+                    <img class="" src="/img/empty-file.svg" alt="" width="140" height="140">
                 </div>
                 <h4 class="empty-title py-4 text-secondary">Notebook is empty !</h4>
             </div>
@@ -29,12 +29,12 @@
         <div id="note{{noteId}}" class="note my-3 p-3 bg-white rounded shadow-sm" note-id="{{noteId}}">
             <h6 class="d-flex justify-content-between align-items-center border-bottom border-gray pb-2 mb-0">
                 <div class="note-title-tag">
-                    <img class="" src="/files/images/{{type}}.svg" alt="" width="22" height="22">
+                    <img class="" src="/img/{{type}}.svg" alt="" width="22" height="22">
                     <span class="note-title">{{title}}</span>
                 </div>
 
                 <button type="button" class="btn btn-sm note-setting-btn bg-transparent" note-id="{{noteId}}">
-                    <img class="" src="/files/images/note-setting.svg" alt="" width="24" height="24">
+                    <img class="" src="/img/note-setting.svg" alt="" width="24" height="24">
                 </button>
 
             </h6>

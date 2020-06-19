@@ -8,13 +8,15 @@ var view = {};
 view.getDefault = function () {
     return {
         stylesheets: [
-            'files/css/bootstrap.min.css',
-            'files/css/style.css',
-            'files/css/sign-in.css',
+            'css/bootstrap.min.css',
+            'css/style.css',
+            'css/sign-in.css',
         ],
+        headScripts: [],
         footerScripts: [
-            'files/js/vendor.js',
-            'files/js/main.js',
+            'js/vendor.js',
+            'js/main.js',
+            'js/service.js',           // registering service worker
         ],
         body: null,
     };
@@ -42,19 +44,19 @@ view.appSettingView = function ( username ) {
         items: [
             {
                 itemName: 'Change display name',
-                itemIcon: tool.readFile( 'public/images/person.svg' ),
+                itemIcon: tool.readFile( 'public/img/person.svg' ),
                 settingStr: 'display-name'
 
             },
             {
                 itemName: 'Change password',
-                itemIcon: tool.readFile( 'public/images/key.svg' ),
+                itemIcon: tool.readFile( 'public/img/key.svg' ),
                 settingStr: 'password'
 
             },
             {
                 itemName: 'Sign out',
-                itemIcon: tool.readFile( 'public/images/sign-out.svg' ),
+                itemIcon: tool.readFile( 'public/img/sign-out.svg' ),
                 settingStr: 'sign-out'
 
             }
@@ -70,18 +72,18 @@ view.noteSettingView = function () {
         items: [
             {
                 itemName: 'Edit',
-                itemIcon: tool.readFile( 'public/images/edit.svg' ),
+                itemIcon: tool.readFile( 'public/img/edit.svg' ),
                 settingStr: 'note-edit'
             },
             {
                 itemName: 'Delete',
-                itemIcon: tool.readFile( 'public/images/delete.svg' ),
+                itemIcon: tool.readFile( 'public/img/delete.svg' ),
                 settingStr: 'note-delete'
 
             },
             {
                 itemName: 'Change color',
-                itemIcon: tool.readFile( 'public/images/palette.svg' ),
+                itemIcon: tool.readFile( 'public/img/palette.svg' ),
                 settingStr: 'note-color'
 
             }
@@ -97,24 +99,24 @@ view.noteOrderSettingView = function () {
         items: [
             {
                 itemName: 'Title',
-                itemIcon: tool.readFile( 'public/images/arrow-up.svg' ),
+                itemIcon: tool.readFile( 'public/img/arrow-up.svg' ),
                 settingStr: 'note-order-title-up'
             },
             {
                 itemName: 'Title',
-                itemIcon: tool.readFile( 'public/images/arrow-down.svg' ),
+                itemIcon: tool.readFile( 'public/img/arrow-down.svg' ),
                 settingStr: 'note-order-title-down'
 
             },
             {
                 itemName: 'Last update',
-                itemIcon: tool.readFile( 'public/images/arrow-up.svg' ),
+                itemIcon: tool.readFile( 'public/img/arrow-up.svg' ),
                 settingStr: 'note-order-date-up'
 
             },
             {
                 itemName: 'Last update',
-                itemIcon: tool.readFile( 'public/images/arrow-down.svg' ),
+                itemIcon: tool.readFile( 'public/img/arrow-down.svg' ),
                 settingStr: 'note-order-date-down'
 
             },
@@ -179,7 +181,7 @@ view.noteAddView = function () {
         items: [
             {
                 itemName: 'Note',
-                itemIcon: tool.readFile( 'public/images/file.svg' ),
+                itemIcon: tool.readFile( 'public/img/file.svg' ),
                 settingStr: 'note-new',
             },
         ]
@@ -188,8 +190,8 @@ view.noteAddView = function () {
 
 view.noteEditView = function () {
     return {
-        backBtn: tool.readFile( 'public/images/arrow-left.svg' ),
-        deleteBtn: tool.readFile( 'public/images/delete.svg' ),
+        backBtn: tool.readFile( 'public/img/arrow-left.svg' ),
+        deleteBtn: tool.readFile( 'public/img/delete.svg' ),
     };
 };
 
@@ -200,10 +202,10 @@ view.userView = function ( userData ) {
         username: userData.username,
         menus: [],
         settings: [],
-        userSettingBtnImage: '/files/images/user-setting.svg',
-        noteExpand: tool.readFile( 'public/images/arrow-down-s.svg' ),
-        noteAddBtnImage: tool.readFile( 'public/images/add.svg' ),
-        logoImage: '/files/images/note-no-shadow.svg',
+        userSettingBtnImage: '/img/user-setting.svg',
+        noteExpand: tool.readFile( 'public/img/arrow-down-s.svg' ),
+        noteAddBtnImage: tool.readFile( 'public/img/add.svg' ),
+        logoImage: '/img/note-no-shadow.svg',
         userData: userData,
 
     };
@@ -239,7 +241,7 @@ view.loginView = function () {
         headScripts: [
 
         ],
-        logoImage: '/files/images/note-no-shadow.svg',
+        logoImage: '/img/note-no-shadow.svg',
         copyright: '2019, A little project'
     };
 

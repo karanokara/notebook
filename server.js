@@ -40,9 +40,10 @@ server.use( express.urlencoded( { extended: false } ) );
 /**
  * serving static files
  *                                  path to file
- * http://localhost:3000/files/  +  images/kitten.jpg
+ * http://localhost:3000/src/  +  images/kitten.jpg
  */
-server.use( '/files', express.static( path.join( __dirname, 'public' ) ) );
+// server.use( '/src', express.static( path.join( __dirname, 'public' ) ) );
+server.use( '/', express.static( path.join( __dirname, 'public' ) ) );
 
 /**
  * using passport session
