@@ -231,12 +231,11 @@ server.use( '/error', function ( req, res ) {
  * 
  */
 server.use( tool.authenticateHere, function ( req, res ) {
+    console.log( 'last route', req.url );
 
-    // redirect to /users 
+    // redirect to /users
     // since it is authenticated
     res.redirect( '/user' );
-
-
 } );
 
 

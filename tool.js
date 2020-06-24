@@ -49,6 +49,7 @@ var tools = {
      * authenticate user first
     */
     authenticateHere: function ( req, res, next ) {
+        console.log( 'authenticate', req.url );
         if ( req.isAuthenticated() )
             next();
         else

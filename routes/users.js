@@ -7,7 +7,7 @@ var router = express.Router();
 
 
 router.use( '/', function ( req, res, next ) {
-    console.log( 'In user.js: ---------------- session is: ' );
+    console.log( 'In user.js: ' + req.baseUrl + ' ---------------- session is: ' );
     console.log( req.session.passport );
     next();
 } );
