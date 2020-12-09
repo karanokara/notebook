@@ -10,6 +10,11 @@ router.get( '/', function ( req, res, next ) {
         res.redirect( '/user' );
     }
     else {
+        res.set( {
+            'X-Powered-By': 'KaraNoKara',
+            // 'Access-Control-Allow-Origin': 'http://karanokara.com:3000',
+        } );
+
         // render index.html using view obj
         res.render( 'index', view.loginView() );
     }

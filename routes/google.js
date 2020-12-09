@@ -8,7 +8,7 @@ var passport = require( 'passport' );
 var privateData = require( '../private' );
 var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
-
+var callbackURL = "/google/callback";
 
 passport.use( new strategyGoogle(
     {
@@ -16,7 +16,7 @@ passport.use( new strategyGoogle(
         clientSecret: privateData.googleClientSecret,
         // After authorization, Google
         // will redirect the user back to this application at  
-        callbackURL: "/google/callback"
+        callbackURL: callbackURL,
     },
     /**
      * 3.
@@ -81,28 +81,59 @@ passport.use( new strategyGoogle(
  */
 router.get( '/callback',
     passport.authenticate( 'google' ),
-    function ( req, res ) {
+    function ( req, res, next ) {
         // res.send( 'reach me!!!!!!!!!!!' );
 
         // send back google.html
         // console.log( req.authInfo );
-        res.render( 'google', { data: JSON.stringify( req.authInfo ) } );
+
+        // ----------------------- This is 2nd solution to domain redirection using postMessage in front end
+        let requestSchema = req.protocol,
+            requestHost = req.headers['host'],
+            requestURL = requestHost;
+
+        if ( !requestHost.startsWith( 'http' ) ) {
+            requestURL = requestSchema + '://' + requestHost;
+        }
+        // ------------------------ This will not be used now
+
+
+        res.render( 'google', {
+            data: JSON.stringify( req.authInfo ),
+            requestDomain: requestURL,
+        } );
     }
 );
 
 /**
  * 1. 
- * authenticate with google
- * Show a page of google official login page
- * 
+ * Authenticate with google
+ * Return a page of google official login page
  */
-router.use( '/',
-    passport.authenticate( 'google',
+router.get( '/', ( req, res, next ) => {
+
+    let requestSchema = req.protocol,
+        requestHost = req.headers['host'],
+        requestURL = requestHost;
+
+    if ( !requestHost.startsWith( 'http' ) ) {
+        requestURL = requestSchema + '://' + requestHost;
+    }
+
+    // get a google authenticate fnc
+    var authenticateFnc = passport.authenticate( 'google',
         {
-            scope: ['profile']
+            scope: ['profile'],
+
+            // using the request domain as the callbackURL
+            // this will replace the callback specified above
+            callbackURL: requestURL + callbackURL,
         }
-    )
-);
+    );
+
+    // this will render a google html page
+    authenticateFnc( req, res, next );
+} );
 
 
 

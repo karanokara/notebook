@@ -1,0 +1,27 @@
+{
+    // Go to Debug -> Click "Add configurtion" -> Click "Attach to process"
+    // 
+    // 2 ways to debug:
+    //      1. In terminal, "npm start" -> In Debug, start "Nodejs Notebook Debugger"
+    //      2. In Debug, start "Launch Notebook nodejs server"
+    //
+    //
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "attach", // attach degugger to a nodejs process
+            "name": "Debugger Launch",
+            "processId": "${command:PickProcess}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Server and Debugger Launch",
+            "program": "${workspaceFolder}/bin/www"
+        }
+    ]
+}

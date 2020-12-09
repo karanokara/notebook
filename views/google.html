@@ -11,12 +11,21 @@
 
     <body>
         <div id="data" style="display:none">{{data}}</div>
-        <script type="text/javascript">
+        <div id="request-domain" style="display:none">{{requestDomain}}</div>
 
+        <script type="text/javascript">
             var parentWindow = window.opener;
             var data = JSON.parse( document.querySelector( '#data' ).innerText );
+
             if ( parentWindow ) {
-                parentWindow.app.finishGoogleLogin( data );
+                try {
+                    parentWindow.app.finishGoogleLogin( data );
+                }
+                catch ( e ) {
+                    // using 
+                    let requestDomain = document.querySelector( '#request-domain' ).innerText;
+                    parentWindow.postMessage( data, requestDomain );
+                }
             }
 
             window.close();    

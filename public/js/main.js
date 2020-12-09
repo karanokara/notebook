@@ -240,8 +240,9 @@ var app = {
             localSubmit = form.find( '#local-login-btn' ),
             googleSubmit = form.find( '#google-login-btn' );
 
-        this.messageBar.isShowed = 0;
+        _this.messageBar.isShowed = 0;
 
+        // when click login
         form.on( 'submit', function ( evt ) {
             evt.preventDefault();
             username.attr( 'disabled', '' );
@@ -255,7 +256,6 @@ var app = {
                     username: name,
                     password: pass,
                 };
-
 
             _this.sendData( '/validate', data, null,
                 // success
@@ -275,18 +275,41 @@ var app = {
                 // complete
                 function () {
                     // others to do after complete
-
                     username.attr( 'disabled', null );
                     password.attr( 'disabled', null );
                     localSubmit.attr( 'disabled', null );
                     googleSubmit.attr( 'disabled', null );
-
                 }
             );
-
-
         } );
 
+        // 2nd way to receive message from popup window
+        // using window message event with window.postMessage()
+        _this.handleMessage = ( event ) => {
+            console.log( 'message', event );
+            let domain = location.hostname,
+                thisDomain = domain,
+                anotherDomain = event.origin;
+
+            // take the main domain of both domain
+            while ( thisDomain.indexOf( '.' ) !== thisDomain.lastIndexOf( '.' ) ) {
+                thisDomain = thisDomain.replace( /[^.]*./, '' )
+            }
+
+            while ( anotherDomain.indexOf( '.' ) !== anotherDomain.lastIndexOf( '.' ) ) {
+                anotherDomain = anotherDomain.replace( /[^.]*./, '' )
+            }
+
+            // IMPORTANT: check if the origin is the same main domain
+            if ( anotherDomain.includes( thisDomain ) ) {
+                // Data sent with postMessage is stored in event.data:
+                _this.finishGoogleLogin( event.data );
+            }
+
+            window.removeEventListener( 'message', _this.handleMessage );
+        };
+
+        // when click login with google
         googleSubmit.on( 'click', function () {
             username.attr( 'disabled', '' );
             password.attr( 'disabled', '' );
@@ -294,6 +317,7 @@ var app = {
             googleSubmit.attr( 'disabled', '' );
             _this.popupWindow = window.open( '/google', 'Login with Google', "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes, height=700,width=500,left=500,top=0" );
 
+            // check if popup window is closed per 2s
             _this.pollTimer = setInterval( function () {
                 if ( _this.popupWindow.closed !== false ) { // !== is required for compatibility with Opera
                     clearInterval( _this.pollTimer );
@@ -304,12 +328,14 @@ var app = {
                     localSubmit.attr( 'disabled', null );
                     googleSubmit.attr( 'disabled', null );
 
-                    _this.popupWindow = null;
+                    _this.popupWindow = undefined;
+                    window.removeEventListener( 'message', _this.handleMessage );
                 }
             }, 2000 );
 
+            // 2nd way to receive data from popup window
+            window.addEventListener( 'message', _this.handleMessage );
         } );
-
     },
     /**
      * Call this fnc from pop up window
@@ -327,7 +353,9 @@ var app = {
             document.title = 'Notebook - User Notes';
 
             clearInterval( _this.pollTimer );
-            _this.popupWindow = null;
+            _this.popupWindow = undefined;
+
+            window.removeEventListener( 'message', _this.handleMessage );
         }
     },
     logout: function () {
