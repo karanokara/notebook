@@ -88,19 +88,19 @@ router.get( '/callback',
         // console.log( req.authInfo );
 
         // ----------------------- This is 2nd solution to domain redirection using postMessage in front end
-        let requestSchema = req.protocol,
-            requestHost = req.headers['host'],
-            requestURL = requestHost;
+        // let requestSchema = req.protocol,
+        //     requestHost = req.headers['host'],
+        //     requestURL = requestHost;
 
-        if ( !requestHost.startsWith( 'http' ) ) {
-            requestURL = requestSchema + '://' + requestHost;
-        }
+        // if ( !requestHost.startsWith( 'http' ) ) {
+        //     requestURL = requestSchema + '://' + requestHost;
+        // }
         // ------------------------ This will not be used now
 
 
         res.render( 'google', {
             data: JSON.stringify( req.authInfo ),
-            requestDomain: requestURL,
+            // requestDomain: requestURL,
         } );
     }
 );
@@ -112,13 +112,13 @@ router.get( '/callback',
  */
 router.get( '/', ( req, res, next ) => {
 
-    let requestSchema = req.protocol,
-        requestHost = req.headers['host'],
-        requestURL = requestHost;
+    // let requestSchema = req.protocol,
+    //     requestHost = req.headers['host'],
+    //     requestURL = requestHost;
 
-    if ( !requestHost.startsWith( 'http' ) ) {
-        requestURL = requestSchema + '://' + requestHost;
-    }
+    // if ( !requestHost.startsWith( 'http' ) ) {
+    //     requestURL = requestSchema + '://' + requestHost;
+    // }
 
     // get a google authenticate fnc
     var authenticateFnc = passport.authenticate( 'google',
@@ -127,7 +127,8 @@ router.get( '/', ( req, res, next ) => {
 
             // using the request domain as the callbackURL
             // this will replace the callback specified above
-            callbackURL: requestURL + callbackURL,
+            // this works, but the request domain still is wrong on redirection
+            // callbackURL: requestURL + callbackURL,   
         }
     );
 

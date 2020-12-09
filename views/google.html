@@ -11,7 +11,6 @@
 
     <body>
         <div id="data" style="display:none">{{data}}</div>
-        <div id="request-domain" style="display:none">{{requestDomain}}</div>
 
         <script type="text/javascript">
             var parentWindow = window.opener;
@@ -22,9 +21,12 @@
                     parentWindow.app.finishGoogleLogin( data );
                 }
                 catch ( e ) {
-                    // using 
-                    let requestDomain = document.querySelector( '#request-domain' ).innerText;
-                    parentWindow.postMessage( data, requestDomain );
+                    // using postMessage, since the requestDomain was wrong at "try" above
+                    // let requestDomain = document.querySelector( '#request-domain' ).innerText;
+                    // requestDomain is wrong, can't used as the 2nd parameter
+                    // need to use "*"
+                    // recipient then check whether to receive the data
+                    parentWindow.postMessage( data, '*' );
                 }
             }
 
