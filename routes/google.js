@@ -8,7 +8,7 @@ var passport = require( 'passport' );
 var privateData = require( '../private' );
 var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
-var callbackURL = "/google/callback";
+var callbackURL = privateData.googleRedirectURL;
 
 passport.use( new strategyGoogle(
     {
