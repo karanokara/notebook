@@ -1,10 +1,8 @@
 var express = require( 'express' );
 var passport = require( 'passport' );
-var tool = require( '../tool' );
 var database = require( '../database' );
 var view = require( './view' );
 var router = express.Router();
-var passport = require( 'passport' );
 var privateData = require( '../private' );
 var strategyGoogle = require( 'passport-google-oauth20' ).Strategy;
 
@@ -38,7 +36,7 @@ passport.use( new strategyGoogle(
             img: profile._json.picture,
         };
 
-        function callback ( info ) {
+        function callback( info ) {
             var userId = info.data['_id'];
             info.data = view.userView( info.data ).body;
 
